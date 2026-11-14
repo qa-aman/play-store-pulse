@@ -1,0 +1,19 @@
+Bottom line: September averaged 3.92 stars, but users who wrote a review averaged 2.40, and their top complaint is customer support, not the app.
+
+Why it matters: These are service problems, so the fixes sit with Customer Experience and Delivery Operations. Fixing how support closes tickets is the quickest win.
+
+The numbers
+- 19,809 reviews, 20.3% of them 1-star
+- Support in 29.3% of written complaints, late delivery in 18.1%
+- 8 pm to midnight averages 3.72 against 3.90 from noon to 8 pm
+
+Three asks (reply by 20-11-2026)
+1. Customer Experience: Fix how tickets get closed
+2. Delivery Operations: Look at the late-night experience
+3. Customer Experience: Check reply coverage on 1-star reviews
+
+In their words: "zomato is getting worse day by day, i ordered the food, clearly mentioned half kg but i got 350-380g of food, try to connect with support no success try to..."
+
+Go deeper: https://claude.ai/artifact/QGJS1TuGrZHQxn7UN1vnFH
+
+Reply with a different owner if one of these sits with another team.
