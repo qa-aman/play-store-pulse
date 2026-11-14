@@ -46,6 +46,13 @@ Every run saves the email as a draft in the Gmail account named in `config/email
 
 It reads `config/email.json` (`gmail_account`, `gmail_connection`, `to`, `cc`), checks that Composio is on `aman_workspace` and that the connection's mailbox really is `gmail_account`, then calls `GMAIL_CREATE_EMAIL_DRAFT` with the HTML body. Recipients come only from `to` and `cc` in that file. When they are empty, the draft has no recipients and the user adds them in Gmail. Never guess or add a recipient, and change `to`/`cc` only when the user names the exact address. If the script says the connection is a different mailbox, find the right one (`composio connections list`, then `GMAIL_GET_PROFILE --account <word_id>` on each Gmail connection), update `gmail_connection` and rerun. If a draft for this label already exists (`email/gmail_draft.json`), ask before making a second one.
 
+**Without the Composio CLI** (a cloud or scheduled run, where `command -v composio` finds nothing, and settings come from the `PULSE_GMAIL_ACCOUNT`, `PULSE_GMAIL_CONNECTION`, `PULSE_TO`, `PULSE_CC` environment variables because `config/email.json` is not in git):
+
+1. Run `gmail_draft.py --label <label> --payload-only`. It prints the account, the connection and the path of the payload file.
+2. Call the claude.ai Composio connector's `COMPOSIO_MANAGE_CONNECTIONS` with `gmail`, action `list`, and check that the account whose `id` is the connection has `user_info.email` equal to the account. If not, stop and report it: never draft in another mailbox, and never rely on the default account.
+3. Call `COMPOSIO_MULTI_EXECUTE_TOOL` with one tool, `GMAIL_CREATE_EMAIL_DRAFT`, `account` set to the connection, and `arguments` set to the JSON in the payload file.
+4. Write `email/gmail_draft.json` as `{"account": <account>, "draft_id": <data.id from the response>}`.
+
 Never call `GMAIL_SEND_DRAFT` or `GMAIL_SEND_EMAIL`. The user reviews and sends it themselves.
 
 ## 7. Log
