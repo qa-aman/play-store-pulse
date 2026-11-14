@@ -1,0 +1,19 @@
+Bottom line: Ratings held at 4.00, customer support is still the top complaint, and release 20.0.0 runs at 27.9% 1-star.
+
+Why it matters: Most of what users write about is service, so the main fix sits with Customer Experience; release 20.0.0 needs a check from the App team before the next rollout.
+
+The numbers
+- 8,217 reviews, average 4.00 (October: 3.98)
+- Support in 24.9% of written complaints, late delivery in 18.0%
+- 1-star reviews with a reply: 51.4% (October: 39.1%)
+
+Three asks (reply by 20-11-2026)
+1. Customer Experience: Fix how tickets get closed
+2. App team: Check what went wrong in 20.0.0
+3. Customer Experience: Keep closing the reply gap
+
+In their words: "pathetic customer support and pathetic delivery services. I wish I could rate this app in the negative too."
+
+Go deeper: https://claude.ai/artifact/DoLqkBSNTNYVEPCsYGJD8V
+
+Reply with a different owner if one of these sits with another team.

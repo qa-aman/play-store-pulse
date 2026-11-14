@@ -1,0 +1,19 @@
+Bottom line: Ratings held at 3.99, but customer support is still the top complaint, and release 20.0.0 runs at 28.9% 1-star.
+
+Why it matters: What users write about is service and price, not app bugs, so the fixes sit with CX, Pricing and the App team.
+
+The numbers
+- 4,319 reviews, average 3.99 (October: 3.98)
+- Support in 23.9% of written complaints, prices and fees in 18.5%
+- 1-star reviews with a reply: 51.7% (October: 39.1%)
+
+Three asks (reply by 20-11-2026)
+1. Customer Experience: Fix how tickets get closed
+2. Pricing and Monetisation: Make fees easier to see
+3. App team: Check what went wrong in 20.0.0
+
+In their words: "worst customer service. they ask us to mail them and issues won't be resolved immediately. and later also they won't give a satisfactory response."
+
+Go deeper: https://claude.ai/artifact/E7DoLnJFRSFzUGGCPAvbfD
+
+Reply with a different owner if one of these sits with another team.

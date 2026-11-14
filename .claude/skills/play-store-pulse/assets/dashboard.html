@@ -1,0 +1,423 @@
+<meta name="dash-one-writer">
+<link rel="stylesheet" href="okra.css">
+<style>
+/* Zomato Sushi tokens, from github.com/Zomato/compose-sushi: Red500 brand, Green/Yellow/Orange status, Grey scale, 8px corners, Okra type.
+   Text, cards and ground stay on the dashboard tokens so both themes read; brand and status colours read on light and dark. */
+.pp {
+  --z-brand: #EF4F5F; --z-brand-deep: #CF4A57;
+  --z-brand-tint: color-mix(in srgb, #EF4F5F 9%, var(--color-panel));
+  --z-brand-wash: color-mix(in srgb, #EF4F5F 5%, var(--color-bg));
+  --z-good: #009A51; --z-good-deep: #108145; --z-warn: #A5820A; --z-error: #CC511C;
+  --z-tag: color-mix(in srgb, var(--color-fg) 6%, var(--color-panel));
+  --z-r: 8px;
+  --z-font: 'Okra', var(--font-anthropic-sans), system-ui, sans-serif;
+  --z-12: 12px; --z-13: 13px; --z-14: 14px; --z-16: 16px; --z-18: 18px; --z-20: 20px; --z-28: 28px;
+  display: flex; flex-direction: column; gap: 32px; font-family: var(--z-font); font-size: var(--z-14); color: var(--color-fg);
+}
+.pp-head { display: flex; flex-direction: column; gap: 12px; background: var(--z-brand-wash); border: 1px solid color-mix(in srgb, #EF4F5F 18%, var(--color-border-line)); border-radius: calc(var(--z-r) * 2); padding: 20px; }
+.pp-brandrow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.pp-eyebrow { font-size: var(--z-12); font-weight: 600; color: var(--z-brand); letter-spacing: .08em; text-transform: uppercase; }
+.pp-pill { font-size: var(--z-12); font-weight: 500; padding: 3px 10px; border-radius: 999px; background: var(--color-panel); border: 1px solid var(--color-border-line); color: var(--color-fg-muted); }
+.pp-title { font-family: var(--z-font); font-weight: 600; font-size: var(--z-28); line-height: 1.2; letter-spacing: -.01em; margin: 0; text-wrap: balance; }
+.pp-lede { font-size: var(--z-18); line-height: 1.45; margin: 0; max-width: 68ch; text-wrap: pretty; color: var(--color-fg); }
+.pp-lede b, .pp-text b { font-weight: 600; font-variant-numeric: tabular-nums; }
+.pp-lede .pp-red { color: var(--z-brand-deep); }
+.pp-section { display: flex; flex-direction: column; gap: 14px; }
+.pp-h2 { font-family: var(--z-font); font-size: var(--z-20); font-weight: 600; margin: 0; text-wrap: balance; }
+.pp-text { margin: 0; max-width: 68ch; line-height: 1.55; }
+.pp-muted { color: var(--color-fg-muted); font-size: var(--z-13); line-height: 1.45; }
+.pp-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+.pp-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--z-r); padding: 16px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.pp-label { font-size: var(--z-13); color: var(--color-fg-muted); }
+.pp-big { font-family: var(--z-font); font-weight: 600; font-size: var(--z-28); font-variant-numeric: tabular-nums; line-height: 1.1; letter-spacing: -.01em; }
+.pp-big.pp-bad { color: var(--z-brand); }
+.pp-big.pp-ok { color: var(--z-good); }
+.pp-big.pp-warn { color: var(--z-error); }
+.pp-rate { align-self: flex-start; display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 6px; background: var(--z-good); color: #fff; font-weight: 600; font-size: var(--z-20); font-variant-numeric: tabular-nums; line-height: 1.2; }
+.pp-rate::after { content: "\2605"; font-size: .7em; font-family: system-ui, sans-serif; }
+.pp-two { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+.pp-chart { position: relative; min-height: 220px; min-width: 0; }
+.pp-chart svg { display: block; width: 100%; overflow: visible; }
+.pp-chart .tick text, .pp-chart .pp-axis-label { fill: var(--cds-text-secondary); font-size: var(--z-12); font-family: var(--z-font); }
+.pp-chart .domain { stroke: var(--cds-chart-axis); }
+.pp-chart .tick line { stroke: var(--cds-chart-grid); }
+.pp-tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); box-shadow: var(--cds-shadow-popover); border-radius: var(--z-r); padding: 8px 12px; font-size: var(--z-12); font-family: var(--z-font); color: var(--color-fg); white-space: nowrap; z-index: 2; display: flex; flex-direction: column; gap: 2px; }
+.pp-tip div:first-child { font-weight: 600; }
+.pp-tip span { color: var(--cds-text-secondary); }
+.pp-wrap { overflow-x: auto; background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--z-r); }
+.pp-table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.pp-table th { text-align: left; font-size: var(--z-12); color: var(--color-fg-muted); font-weight: 500; padding: 10px 12px; border-bottom: 1px solid var(--color-border-line); white-space: nowrap; }
+.pp-table td { padding: 12px; border-bottom: 1px solid var(--color-border-line); vertical-align: top; }
+.pp-table tr:last-child td { border-bottom: 0; }
+.pp-table td.pp-num, .pp-table th.pp-num { text-align: right; white-space: nowrap; }
+.pp-table td.pp-quote { color: var(--color-fg-muted); font-size: var(--z-13); line-height: 1.45; min-width: 240px; max-width: 420px; }
+.pp-table td.pp-theme { font-weight: 600; white-space: nowrap; }
+.pp-table td.pp-owner span { display: inline-block; white-space: nowrap; font-size: var(--z-12); font-weight: 500; padding: 3px 8px; border-radius: 6px; background: var(--z-tag); color: var(--color-fg); }
+.pp-bar { display: inline-block; height: 8px; border-radius: 4px; vertical-align: middle; margin-right: 8px; background: var(--z-brand); }
+.pp-loud { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.pp-loud li { display: grid; grid-template-columns: 76px 1fr; gap: 14px; align-items: start; background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--z-r); padding: 14px 16px; }
+.pp-loud .pp-thumbs { font-weight: 600; font-size: var(--z-20); font-variant-numeric: tabular-nums; color: var(--z-brand); }
+.pp-loud .pp-q { margin: 0; line-height: 1.5; min-width: 0; }
+.pp-stars-low { display: inline-block; padding: 1px 6px; border-radius: 4px; background: var(--z-error); color: #fff; font-weight: 600; font-size: var(--z-12); }
+.pp-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+.pp-actions h3 { margin: 0; font-size: var(--z-16); font-weight: 600; }
+.pp-actions p { margin: 0; line-height: 1.5; }
+.pp-chip { align-self: flex-start; font-size: var(--z-12); font-weight: 500; padding: 3px 10px; border-radius: 999px; background: var(--z-brand-tint); color: var(--z-brand-deep); }
+.pp details { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--z-r); padding: 12px 16px; }
+.pp details summary { cursor: pointer; color: var(--color-fg); font-weight: 500; }
+.pp details ul { margin: 8px 0 0; padding-left: 1.2em; line-height: 1.6; color: var(--color-fg-muted); }
+[data-dash-source-state=refreshing] { opacity: .5; }
+@media (max-width: 480px) { .pp-loud li { grid-template-columns: 1fr; gap: 6px; } .pp-head { padding: 16px; } }
+</style>
+
+<div class="pp">
+  <header class="pp-head" id="summary">
+    <div class="pp-brandrow"><span class="pp-eyebrow">Play Store Pulse</span><span class="pp-pill">{{PERIOD_LABEL}}</span><span class="pp-pill">Android · English · India</span></div>
+    <h1 class="pp-title">What Zomato users told us {{PERIOD_PHRASE}}</h1>
+    <p class="pp-lede" data-read lang="en">Reviews {{PERIOD_PHRASE}} averaged <b data-draw="num" data-source="kpis" data-field="avg_rating" data-row="0" data-fmt="dec2">—</b> stars across <b data-draw="num" data-source="kpis" data-field="reviews" data-row="0" data-fmt="int">—</b> reviews, but the <b data-draw="num" data-source="kpis" data-field="text_reviews" data-row="0" data-fmt="int">—</b> people who wrote something averaged <b class="pp-red" data-draw="num" data-source="kpis" data-field="text_avg" data-row="0" data-fmt="dec2">—</b>. {{HEADLINE}}</p>
+  </header>
+
+  <section class="pp-section" id="scorecard">
+    <h2 class="pp-h2">At a glance</h2>
+    <div class="pp-tiles">
+      <div class="pp-card"><span class="pp-label">Reviews, {{RANGE}}</span><span class="pp-big" data-draw="num" data-source="kpis" data-field="reviews" data-row="0" data-fmt="int">—</span><span class="pp-muted">About <span data-draw="num" data-source="kpis" data-field="reviews_per_day" data-row="0" data-fmt="int">—</span> a day</span></div>
+      <div class="pp-card"><span class="pp-label">Average rating</span><span class="pp-rate" data-rate data-draw="num" data-source="kpis" data-field="avg_rating" data-row="0" data-fmt="dec2">—</span><span class="pp-muted">Out of 5 stars</span></div>
+      <div class="pp-card"><span class="pp-label">1-star share</span><span class="pp-big pp-bad" data-draw="num" data-source="kpis" data-field="one_star_share" data-row="0" data-fmt="pct">—</span><span class="pp-muted">Of all reviews</span></div>
+      <div class="pp-card"><span class="pp-label">Reviews with written text</span><span class="pp-big" data-draw="num" data-source="kpis" data-field="text_share" data-row="0" data-fmt="pct">—</span><span class="pp-muted">More than 20 characters</span></div>
+    </div>
+    <p class="pp-muted">{{COMPARISON_NOTE}}</p>
+  </section>
+
+  <section class="pp-section" id="two-ratings">
+    <h2 class="pp-h2">Two ratings hide inside one average</h2>
+    <div class="pp-two">
+      <div class="pp-tiles">
+        <div class="pp-card"><span class="pp-label">Star-only reviews</span><span class="pp-rate" data-rate data-draw="num" data-source="kpis" data-field="star_only_avg" data-row="0" data-fmt="dec2">—</span><span class="pp-muted">People who only tapped a rating</span></div>
+        <div class="pp-card"><span class="pp-label">Reviews with text</span><span class="pp-rate" data-rate data-draw="num" data-source="kpis" data-field="text_avg" data-row="0" data-fmt="dec2">—</span><span class="pp-muted">People who explained why</span></div>
+      </div>
+      <div class="pp-chart" id="stars-chart" data-draw="stars" data-source="stars" role="img" aria-label="Reviews by star rating, with the share of each that has written text"></div>
+    </div>
+    <p class="pp-text" data-read lang="en">Unhappy people write and happy people tap. <b data-draw="num" data-source="stars" data-field="text_share" data-where="stars=1" data-fmt="pct">—</b> of 1-star reviews come with text, against <b data-draw="num" data-source="stars" data-field="text_share" data-where="stars=5" data-fmt="pct">—</b> of 5-star reviews, so the written reviews are where the reasons are.</p>
+  </section>
+
+  <section class="pp-section" id="complaints">
+    <h2 class="pp-h2">Top complaints in written 1 and 2-star reviews</h2>
+    <p class="pp-muted">Share of the <span data-draw="num" data-source="kpis" data-field="negative_text_reviews" data-row="0" data-fmt="int">—</span> written 1 and 2-star reviews. A review can mention more than one theme. Owner teams are suggestions.</p>
+    <div class="pp-wrap">
+      <table class="pp-table" data-source="complaints" data-row-key="code">
+        <thead><tr><th data-field="theme">Theme</th><th data-field="share">Share</th><th class="pp-num" data-field="reviews">Reviews</th><th data-field="owner">Suggested owner</th><th data-field="quote_1">What users say</th></tr></thead>
+        <tbody data-draw="complaints"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="pp-section" id="praise">
+    <h2 class="pp-h2">What happy users mention</h2>
+    <p class="pp-muted">Share of the <span data-draw="num" data-source="kpis" data-field="positive_text_reviews" data-row="0" data-fmt="int">—</span> written 4 and 5-star reviews.</p>
+    <div class="pp-chart" id="praise-chart" data-draw="praise" data-source="praise" role="img" aria-label="Share of written positive reviews that mention each theme" style="min-height: 160px"></div>
+  </section>
+
+  <section class="pp-section" id="timing">
+    <h2 class="pp-h2">When it goes wrong</h2>
+    <p class="pp-text" data-read lang="en">From 8 pm to midnight, the busiest stretch with <b data-draw="num" data-source="windows" data-field="reviews" data-where="window=night" data-fmt="int">—</b> reviews, the average falls to <b data-draw="num" data-source="windows" data-field="avg_rating" data-where="window=night" data-fmt="dec2">—</b>, against <b data-draw="num" data-source="windows" data-field="avg_rating" data-where="window=afternoon" data-fmt="dec2">—</b> from noon to 8 pm. Between midnight and 8 am it is <b data-draw="num" data-source="windows" data-field="avg_rating" data-where="window=early" data-fmt="dec2">—</b>.</p>
+    <div class="pp-two">
+      <div class="pp-card">
+        <span class="pp-label">Average rating by hour of the review (IST)</span>
+        <div class="pp-chart" id="hours-chart" data-draw="hours" data-source="hours kpis" role="img" aria-label="Average rating by hour of day, with the period average as a reference line"></div>
+      </div>
+      <div class="pp-card">
+        <span class="pp-label">1-star share by day, worst 3 days marked</span>
+        <div class="pp-chart" id="daily-chart" data-draw="daily" data-source="daily kpis worst_days" role="img" aria-label="Share of 1-star reviews for each day of the period, with the period share as a reference line"></div>
+      </div>
+    </div>
+    <p class="pp-muted">Worth checking the worst days against the ops and incident log.</p>
+  </section>
+
+  <section class="pp-section" id="replies">
+    <h2 class="pp-h2">Replies are fast but canned</h2>
+    <div class="pp-tiles">
+      <div class="pp-card"><span class="pp-label">Reviews with a reply</span><span class="pp-big" data-draw="num" data-source="kpis" data-field="reply_rate" data-row="0" data-fmt="pct">—</span></div>
+      <div class="pp-card"><span class="pp-label">Median time to reply</span><span class="pp-big pp-ok" data-draw="num" data-source="kpis" data-field="median_reply_minutes" data-row="0" data-fmt="min">—</span></div>
+      <div class="pp-card"><span class="pp-label">1-star reviews with no reply</span><span class="pp-big pp-bad" data-draw="num" data-source="kpis" data-field="one_star_unreplied" data-row="0" data-fmt="int">—</span><span class="pp-muted"><span data-draw="num" data-source="kpis" data-field="one_star_reply_rate" data-row="0" data-fmt="pct">—</span> of 1-star reviews got a reply</span></div>
+      <div class="pp-card"><span class="pp-label">Replies that open with the same line</span><span class="pp-big pp-warn" data-draw="num" data-source="kpis" data-field="top_template_share" data-row="0" data-fmt="pct">—</span><span class="pp-muted">The 3 most used openings cover <span data-draw="num" data-source="kpis" data-field="top3_template_share" data-row="0" data-fmt="pct">—</span></span></div>
+    </div>
+  </section>
+
+  <section class="pp-section" id="releases">
+    <h2 class="pp-h2">Release check</h2>
+    <p class="pp-text" data-read lang="en">{{RELEASE_NOTE}}</p>
+    <div class="pp-wrap">
+      <table class="pp-table" data-source="versions" data-row-key="version">
+        <thead><tr><th data-field="version">App version</th><th class="pp-num" data-field="reviews">Reviews</th><th class="pp-num" data-field="avg_rating">Average rating</th><th class="pp-num" data-field="one_star_share">1-star share</th></tr></thead>
+        <tbody data-draw="versions"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="pp-section" id="loudest">
+    <h2 class="pp-h2">Most agreed-with reviews</h2>
+    <p class="pp-muted">Ranked by thumbs-up from other users. Personal details are masked.</p>
+    <ol class="pp-loud" data-draw="loudest" data-source="loudest"></ol>
+  </section>
+
+  <section class="pp-section" id="actions">
+    <h2 class="pp-h2">{{ASKS_HEADING}}</h2>
+    <div class="pp-actions">
+{{ACTIONS}}
+    </div>
+  </section>
+
+  <details id="method">
+    <summary>How these numbers are made</summary>
+    <ul data-read lang="en">
+      <li>Source: public Google Play reviews of the Zomato Android app, read with the open-source google-play-scraper library. English reviews from India only, so Hindi and other languages are not included.</li>
+      <li>Times are in IST. The period runs from {{FIRST_DAY}} 00:00 to {{LAST_DAY}} 23:59.</li>
+      <li>A written review has more than 20 characters of text. Shorter ones count as star-only.</li>
+      <li>Themes are keyword matches, a first cut. AI labelling of every written review would make them sharper.</li>
+      <li>Quotes are picked by the script and masked for phone numbers, emails and long ids.</li>
+    </ul>
+  </details>
+</div>
+
+<script>
+window.pp = window.pp || {};
+pp.fmt = {
+  int: d3.format(','),
+  pct: (v) => d3.format('.1f')(v) + '%',
+  dec2: d3.format('.2f'),
+  min: (v) => v + ' min',
+};
+pp.rateColor = (v) => (v >= 4 ? 'var(--z-good-deep)' : v >= 3.5 ? 'var(--z-good)' : v >= 3 ? 'var(--z-warn)' : 'var(--z-error)');
+pp.starColor = (s) => (s >= 4 ? 'var(--z-good)' : s === 3 ? 'var(--z-warn)' : 'var(--z-brand)');
+pp.rows = (src) => (src.status === 'ok' ? (Array.isArray(src.data) ? src.data : [src.data]) : []);
+pp.tip = (box) => {
+  let t = box.querySelector('.pp-tip');
+  if (!t) { t = document.createElement('div'); t.className = 'pp-tip'; t.hidden = true; box.appendChild(t); }
+  return {
+    show(ev, lines) {
+      t.replaceChildren(...lines.map(([a, b]) => { const d = document.createElement('div'); d.textContent = a + ' '; if (b != null) { const s = document.createElement('span'); s.textContent = b; d.appendChild(s); } return d; }));
+      t.hidden = false;
+      const r = box.getBoundingClientRect();
+      let x = ev.clientX - r.left + 12, y = ev.clientY - r.top + 12;
+      if (x + t.offsetWidth > box.clientWidth) x = ev.clientX - r.left - t.offsetWidth - 12;
+      t.style.left = Math.max(0, x) + 'px'; t.style.top = y + 'px';
+    },
+    hide() { t.hidden = true; },
+  };
+};
+pp.placeholder = (el, src) => {
+  el.replaceChildren();
+  if (src.status === 'error') { const p = document.createElement('p'); p.className = 'pp-muted'; p.textContent = 'Failed to load'; el.appendChild(p); }
+};
+
+dash.calc('windows', {
+  inputs: ['hours'],
+  title: 'Rating by part of the day',
+  description: 'Average rating for four parts of the day, weighted by the number of reviews in each hour.',
+  fn: (hours) => {
+    const parts = [['early', 'Midnight to 8 am', 0, 8], ['morning', '8 am to noon', 8, 12], ['afternoon', 'Noon to 8 pm', 12, 20], ['night', '8 pm to midnight', 20, 24]];
+    return parts.map(([window, label, from, to]) => {
+      const hs = hours.filter((h) => +h.hour >= from && +h.hour < to);
+      const reviews = hs.reduce((s, h) => s + +h.reviews, 0);
+      const weighted = hs.reduce((s, h) => s + +h.avg_rating * +h.reviews, 0);
+      return { window, label, reviews, avg_rating: reviews ? Math.round((weighted / reviews) * 100) / 100 : null };
+    });
+  },
+});
+
+dash.calc('worst_days', {
+  inputs: ['daily'],
+  title: 'Worst 3 days',
+  description: 'The 3 days of the period with the highest share of 1-star reviews.',
+  fn: (daily) => daily.slice().sort((a, b) => b.one_star_share - a.one_star_share).slice(0, 3)
+    .map((d, i) => ({ rank: i + 1, date: d.date, one_star_share: d.one_star_share, reviews: d.reviews })),
+});
+
+dash.draw('num', (el) => {
+  const src = dash.data(el.dataset.source);
+  el.classList.toggle('dash-skeleton', src.status === 'loading');
+  const rows = pp.rows(src);
+  let row;
+  if (el.dataset.where) {
+    const [k, v] = el.dataset.where.split('=');
+    row = rows.find((r) => String(r[k]) === decodeURIComponent(v));
+  } else row = rows[+(el.dataset.row || 0)];
+  const v = row ? row[el.dataset.field] : null;
+  el.textContent = v == null || v === '' ? '—' : (pp.fmt[el.dataset.fmt] || String)(v);
+  if (el.hasAttribute('data-rate')) el.style.background = v == null ? '' : pp.rateColor(+v);
+});
+</script>
+
+<script>
+dash.draw('stars', (el) => {
+  const src = dash.data('stars');
+  if (src.status !== 'ok') return pp.placeholder(el, src);
+  const data = src.data;
+  const W = el.clientWidth || 320, rowH = 34, top = 6, H = top + data.length * rowH;
+  const left = 34, right = 120;
+  const x = d3.scaleLinear().domain([0, d3.max(data, (d) => +d.reviews)]).range([0, Math.max(40, W - left - right)]);
+  el.replaceChildren();
+  const svg = d3.select(el).append('svg').attr('viewBox', `0 0 ${W} ${H}`).attr('height', H).attr('role', 'img')
+    .attr('aria-label', 'Reviews by star rating');
+  const tip = pp.tip(el);
+  const g = svg.selectAll('g.r').data(data).join('g').attr('transform', (d, i) => `translate(0,${top + i * rowH})`);
+  g.append('text').attr('class', 'pp-axis-label').attr('x', 0).attr('y', 17).text((d) => d.stars + '★');
+  g.append('rect').attr('x', left).attr('y', 6).attr('height', 16).attr('rx', 3)
+    .attr('width', (d) => Math.max(2, x(+d.reviews)))
+    .style('fill', (d) => pp.starColor(+d.stars))
+    .on('mousemove', (ev, d) => tip.show(ev, [[`${d.stars} stars`], [pp.fmt.int(d.reviews) + ' reviews', pp.fmt.pct(d.share) + ' of all'], [pp.fmt.pct(d.text_share) + ' wrote text']]))
+    .on('mouseleave', () => tip.hide());
+  g.append('text').attr('class', 'pp-axis-label').attr('x', (d) => left + Math.max(2, x(+d.reviews)) + 6).attr('y', 18)
+    .text((d) => `${pp.fmt.int(d.reviews)} · ${Math.round(d.text_share)}% wrote`);
+});
+
+dash.draw('praise', (el) => {
+  const src = dash.data('praise');
+  if (src.status !== 'ok') return pp.placeholder(el, src);
+  const data = src.data;
+  const W = el.clientWidth || 320, rowH = 30, H = data.length * rowH;
+  el.replaceChildren();
+  const svg = d3.select(el).append('svg').attr('viewBox', `0 0 ${W} ${H}`).attr('height', H).attr('role', 'img')
+    .attr('aria-label', 'Themes in written positive reviews');
+  const labels = svg.append('g');
+  labels.selectAll('text').data(data).join('text').attr('class', 'pp-axis-label').attr('y', (d, i) => i * rowH + 18).text((d) => d.theme);
+  let left = 0; labels.selectAll('text').each(function () { left = Math.max(left, this.getComputedTextLength()); });
+  left = Math.ceil(left) + 12;
+  const x = d3.scaleLinear().domain([0, d3.max(data, (d) => +d.share)]).range([0, Math.max(40, W - left - 60)]);
+  const tip = pp.tip(el);
+  svg.selectAll('rect').data(data).join('rect').attr('x', left).attr('y', (d, i) => i * rowH + 7).attr('height', 14).attr('rx', 3)
+    .attr('width', (d) => Math.max(2, x(+d.share))).style('fill', 'var(--z-good)')
+    .on('mousemove', (ev, d) => tip.show(ev, [[d.theme], [pp.fmt.int(d.reviews) + ' reviews', pp.fmt.pct(d.share)]]))
+    .on('mouseleave', () => tip.hide());
+  svg.selectAll('text.v').data(data).join('text').attr('class', 'pp-axis-label v').attr('x', (d) => left + Math.max(2, x(+d.share)) + 6)
+    .attr('y', (d, i) => i * rowH + 18).text((d) => pp.fmt.pct(d.share));
+});
+
+pp.lineChart = (el, data, opts) => {
+  const W = el.clientWidth || 320, H = 220, m = { t: 12, r: 12, b: 26, l: 0 };
+  el.replaceChildren();
+  const svg = d3.select(el).append('svg').attr('viewBox', `0 0 ${W} ${H}`).attr('height', H).attr('role', 'img').attr('aria-label', opts.label);
+  const y = d3.scaleLinear().domain(opts.yDomain).nice().range([H - m.b, m.t]);
+  const yAxis = svg.append('g').call(d3.axisLeft(y).ticks(5).tickFormat(opts.yFmt).tickSize(0));
+  let w = 0; yAxis.selectAll('text').each(function () { w = Math.max(w, this.getComputedTextLength()); });
+  m.l = Math.ceil(w) + 10;
+  yAxis.attr('transform', `translate(${m.l},0)`).select('.domain').remove();
+  const x = d3.scalePoint().domain(data.map(opts.xKey)).range([m.l + 6, W - m.r]);
+  svg.append('g').selectAll('line').data(y.ticks(5)).join('line').attr('x1', m.l).attr('x2', W - m.r)
+    .attr('y1', (d) => y(d)).attr('y2', (d) => y(d)).style('stroke', 'var(--cds-chart-grid)');
+  const every = Math.ceil(data.length / Math.max(2, Math.floor((W - m.l) / 52)));
+  svg.append('g').attr('transform', `translate(0,${H - m.b})`)
+    .call(d3.axisBottom(x).tickValues(data.map(opts.xKey).filter((d, i) => i % every === 0)).tickFormat(opts.xFmt).tickSize(0).tickPadding(8))
+    .select('.domain').style('stroke', 'var(--cds-chart-axis)');
+  if (opts.band) {
+    svg.append('rect').attr('x', x(opts.band[0]) - 4).attr('width', x(opts.band[1]) - x(opts.band[0]) + 8)
+      .attr('y', m.t).attr('height', H - m.b - m.t).style('fill', 'var(--z-brand)').style('opacity', 0.08);
+  }
+  if (opts.ref != null) {
+    svg.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(opts.ref)).attr('y2', y(opts.ref))
+      .style('stroke', 'var(--cds-chart-reference)').style('stroke-dasharray', '4 3');
+    svg.append('text').attr('class', 'pp-axis-label').attr('x', W - m.r).attr('y', y(opts.ref) - 5).attr('text-anchor', 'end').text(opts.refLabel);
+  }
+  svg.append('path').datum(data).attr('fill', 'none').style('stroke', opts.color || 'var(--color-fg)').attr('stroke-width', 2)
+    .attr('d', d3.line().x((d) => x(opts.xKey(d))).y((d) => y(opts.yKey(d))));
+  const tip = pp.tip(el);
+  svg.selectAll('circle').data(data).join('circle').attr('cx', (d) => x(opts.xKey(d))).attr('cy', (d) => y(opts.yKey(d)))
+    .attr('r', (d) => (opts.hi && opts.hi(d) ? 5.5 : 4))
+    .style('fill', (d) => (opts.dot ? opts.dot(d) : opts.hi && opts.hi(d) ? 'var(--z-brand)' : (opts.color || 'var(--color-fg)')))
+    .style('stroke', 'var(--color-panel)').attr('stroke-width', 1.5)
+    .on('mousemove', (ev, d) => tip.show(ev, opts.tip(d))).on('mouseleave', () => tip.hide());
+  if (opts.hi) {
+    svg.selectAll('text.hl').data(data.filter(opts.hi)).join('text').attr('class', 'pp-axis-label hl')
+      .attr('x', (d) => x(opts.xKey(d))).attr('y', (d) => y(opts.yKey(d)) - 9).attr('text-anchor', 'middle')
+      .text((d) => opts.xKey(d).slice(0, 5));
+  }
+  svg.selectAll('circle').raise();
+};
+
+dash.draw('hours', (el) => {
+  const src = dash.data('hours'), k = dash.data('kpis');
+  if (src.status !== 'ok') return pp.placeholder(el, src);
+  const avg = k.status === 'ok' ? +k.data[0].avg_rating : null;
+  pp.lineChart(el, src.data, {
+    label: 'Average rating by hour of day',
+    xKey: (d) => d.label, xFmt: (v) => v.slice(0, 2), yKey: (d) => +d.avg_rating,
+    yDomain: [d3.min(src.data, (d) => +d.avg_rating) - 0.1, d3.max(src.data, (d) => +d.avg_rating) + 0.1], yFmt: d3.format('.1f'),
+    ref: avg, refLabel: avg != null ? 'Average ' + pp.fmt.dec2(avg) : '', band: ['20:00', '23:00'],
+    color: 'var(--color-fg-muted)', dot: (d) => pp.rateColor(+d.avg_rating),
+    tip: (d) => [[d.label + ' to ' + String((+d.hour + 1) % 24).padStart(2, '0') + ':00'], ['Average', pp.fmt.dec2(d.avg_rating)], ['Reviews', pp.fmt.int(d.reviews)], ['1-star', pp.fmt.pct(d.one_star_share)]],
+  });
+});
+
+dash.draw('daily', (el) => {
+  const src = dash.data('daily'), k = dash.data('kpis'), w = dash.data('worst_days');
+  if (src.status !== 'ok') return pp.placeholder(el, src);
+  const ref = k.status === 'ok' ? +k.data[0].one_star_share : null;
+  const worst = new Set(w.status === 'ok' ? w.data.map((d) => d.date) : []);
+  pp.lineChart(el, src.data, {
+    label: 'Share of 1-star reviews by day',
+    xKey: (d) => d.date, xFmt: (v) => (src.data.length > 40 ? v.slice(0, 5) : v.slice(0, 2)), yKey: (d) => +d.one_star_share,
+    yDomain: [d3.min(src.data, (d) => +d.one_star_share) - 1, d3.max(src.data, (d) => +d.one_star_share) + 1.5], yFmt: (v) => v + '%',
+    ref, refLabel: ref != null ? 'Average ' + pp.fmt.pct(ref) : '', hi: (d) => worst.has(d.date),
+    color: 'var(--z-brand)', dot: (d) => (worst.has(d.date) ? 'var(--z-brand-deep)' : 'var(--z-brand)'),
+    tip: (d) => [[d.date], ['1-star', pp.fmt.pct(d.one_star_share)], ['Average', pp.fmt.dec2(d.avg_rating)], ['Reviews', pp.fmt.int(d.reviews)]],
+  });
+});
+</script>
+
+<script>
+dash.draw('complaints', (tb) => {
+  const src = dash.data('complaints');
+  tb.replaceChildren();
+  if (src.status !== 'ok') return;
+  const max = d3.max(src.data, (d) => +d.share);
+  src.data.forEach((d) => {
+    const tr = document.createElement('tr'); tr.dataset.key = d.code;
+    const td = (cls, text) => { const c = document.createElement('td'); if (cls) c.className = cls; if (text != null) c.textContent = text; tr.appendChild(c); return c; };
+    td('pp-theme', d.theme);
+    const s = td('pp-num');
+    const bar = document.createElement('span'); bar.className = 'pp-bar';
+    bar.style.width = Math.max(4, (d.share / max) * 90) + 'px';
+    s.appendChild(bar); s.appendChild(document.createTextNode(pp.fmt.pct(d.share)));
+    td('pp-num', pp.fmt.int(d.reviews));
+    const o = td('pp-owner'); const tag = document.createElement('span'); tag.textContent = d.owner; o.appendChild(tag);
+    td('pp-quote', d.quote_1 ? '"' + d.quote_1 + '"' : '');
+    tb.appendChild(tr);
+  });
+});
+
+dash.draw('versions', (tb) => {
+  const src = dash.data('versions');
+  tb.replaceChildren();
+  if (src.status !== 'ok') return;
+  src.data.forEach((d) => {
+    const tr = document.createElement('tr'); tr.dataset.key = d.version;
+    [[d.version, ''], [pp.fmt.int(d.reviews), 'pp-num'], [pp.fmt.dec2(d.avg_rating), 'pp-num'], [pp.fmt.pct(d.one_star_share), 'pp-num']].forEach(([t, c]) => {
+      const cell = document.createElement('td'); cell.textContent = t; if (c) cell.className = c; tr.appendChild(cell);
+    });
+    if (+d.one_star_share > 30) { tr.lastChild.style.color = 'var(--z-brand)'; tr.lastChild.style.fontWeight = '600'; }
+    tb.appendChild(tr);
+  });
+});
+
+dash.draw('loudest', (ol) => {
+  const src = dash.data('loudest');
+  ol.replaceChildren();
+  if (src.status !== 'ok') return;
+  src.data.forEach((d, i) => {
+    const li = document.createElement('li');
+    const left = document.createElement('div');
+    const n = document.createElement('div'); n.className = 'pp-thumbs'; n.textContent = pp.fmt.int(d.thumbs_up);
+    n.dataset.source = 'loudest'; n.dataset.field = 'thumbs_up'; n.dataset.row = String(i);
+    const cap = document.createElement('div'); cap.className = 'pp-muted'; cap.textContent = 'agree';
+    left.append(n, cap);
+    const right = document.createElement('div');
+    const q = document.createElement('p'); q.className = 'pp-q'; q.textContent = '"' + d.text + (d.text.length >= 320 ? '…' : '') + '"';
+    const meta = document.createElement('div'); meta.className = 'pp-muted';
+    const st = document.createElement('span'); st.className = 'pp-stars-low'; st.style.background = pp.starColor(+d.stars); st.textContent = d.stars + ' ★';
+    meta.append(st, document.createTextNode('  ' + d.date));
+    right.append(q, meta);
+    li.append(left, right);
+    ol.appendChild(li);
+  });
+});
+</script>

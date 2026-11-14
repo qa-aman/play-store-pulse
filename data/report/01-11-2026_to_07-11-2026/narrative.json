@@ -1,0 +1,11 @@
+{
+ "headline": "Customer support still leads the complaints, with prices and late delivery close behind.",
+ "comparison_note": "Against October 2026 (from the October report): average rating 3.99 vs 3.98, 1-star share 19.1% vs 18.7%. Ratings are flat, while 1-star reply coverage rose from 39.1% to 51.7%. This covers 7 days, so expect more noise than a full month.",
+ "release_note": "Version 20.0.0 stands out again, with a 1-star share well above the period's, on 121 reviews. Version 20.0.1 is doing better than the main version, 19.9.9. Reviews with no app version are the usual outlier.",
+ "asks_heading": "Three asks for the coming week",
+ "actions": [
+  {"owner": "Customer Experience", "title": "Fix how tickets get closed", "text": "Support comes up in [[complaints.share@code=support|pct]] of written complaints, the top theme again. Users say issues are pushed to email and left open. Audit a sample of closed tickets for real resolution.", "measure": "support share of complaints next week"},
+  {"owner": "Pricing and Monetisation", "title": "Make fees easier to see", "text": "Prices and fees come up in [[complaints.share@code=price|pct]] of written complaints, and the most agreed-with review this week, with [[loudest.thumbs_up#0|int]] thumbs-up, is about high prices and missing offers. Review how packing, platform and delivery fees are shown before checkout.", "measure": "price share of complaints"},
+  {"owner": "App team", "title": "Check what went wrong in 20.0.0", "text": "Version 20.0.0 has a 1-star share of [[versions.one_star_share@version=20.0.0|pct]] against [[kpis.one_star_share#0|pct]] for the period. Compare its 1-star reviews with those on 20.0.1 before the next rollout.", "measure": "1-star share of the next release"}
+ ]
+}

@@ -1,0 +1,11 @@
+{
+ "headline": "Their top complaint is customer support, not the app.",
+ "comparison_note": "This is the first month tracked, so there is no change from the month before yet. From November, each tile will show the change.",
+ "release_note": "No October release stands out. The main versions all sit close to the month average. Reviews with no app version are the outlier, and are worth a look with the app team.",
+ "asks_heading": "Three asks for November",
+ "actions": [
+  {"owner": "Customer Experience", "title": "Fix how tickets get closed", "text": "Support comes up in [[complaints.share@code=support|pct]] of written complaints, ahead of late delivery. Users describe tickets closed with no fix. Audit a sample of closed tickets for real resolution.", "measure": "support share of complaints in November"},
+  {"owner": "Delivery Operations", "title": "Look at the late-night experience", "text": "8 pm to midnight brings the most reviews and averages [[windows.avg_rating@window=night|dec2]]. Check rider supply and delivery-time promises in that window.", "measure": "average rating, 8 pm to midnight"},
+  {"owner": "Customer Experience", "title": "Reply to every 1-star review properly", "text": "[[kpis.one_star_unreplied#0|int]] one-star reviews got no reply, while most replies reuse one line. Cover every 1-star review with a reply that names the issue.", "measure": "1-star reply rate and share of templated replies"}
+ ]
+}

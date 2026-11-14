@@ -1,0 +1,12 @@
+{
+  "subject": "Play Store Pulse October 2026: support tops complaints, 3 asks",
+  "bottom_line": "October averaged [[kpis.avg_rating#0|dec2]] stars, but users who wrote a review averaged [[kpis.text_avg#0|dec2]], and their top complaint is customer support, not the app.",
+  "why_it_matters": "These are service problems, so the fixes sit with Customer Experience and Delivery Operations. Replying properly to unhappy users is the quickest win.",
+  "numbers": [
+    "[[kpis.reviews#0|int]] reviews, [[kpis.one_star_share#0|pct]] of them 1-star",
+    "Support in [[complaints.share@code=support|pct]] of written complaints, late delivery in [[complaints.share@code=late|pct]]",
+    "8 pm to midnight, the busiest stretch, averages [[windows.avg_rating@window=night|dec2]] against [[windows.avg_rating@window=afternoon|dec2]] from noon to 8 pm",
+    "[[kpis.one_star_unreplied#0|int]] one-star reviews got no reply, and [[kpis.top_template_share#0|pct]] of replies open with the same line"
+  ],
+  "quote": "complaints:support"
+}

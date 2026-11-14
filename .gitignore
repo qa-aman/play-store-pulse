@@ -1,0 +1,16 @@
+# local environment
+.venv/
+__pycache__/
+.DS_Store
+logs/
+
+# scraped reviews: raw user content, not published
+data/raw/
+
+# per-run build output and Gmail ids
+data/report/*/artifact/
+data/report/*/blobs.json
+data/report/*/email/gmail_*.json
+
+# personal email settings (copy config/email.example.json)
+config/email.json
