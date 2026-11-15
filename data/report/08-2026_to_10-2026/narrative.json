@@ -1,0 +1,26 @@
+{
+ "headline": "Their top complaint is customer support, not the app.",
+ "comparison_note": "This is the first three-month period tracked, so there is no like-for-like comparison yet. For reference, the earlier monthly reports show September at 3.92 and October at 3.98.",
+ "release_note": "No release stands out. None of the main versions is 5 points or more above the period's 1-star share. Reviews with no app version are the outlier, at [[versions.one_star_share@version=Not given|pct]] 1-star, and are worth a look with the app team.",
+ "asks_heading": "Three asks for the next period",
+ "actions": [
+  {
+   "owner": "Customer Experience",
+   "title": "Let users reach a person",
+   "text": "Support comes up in [[complaints.share@code=support|pct]] of written complaints, ahead of late delivery at [[complaints.share@code=late|pct]]. Users describe chatbots that never hand over to an agent. Review the escalation path and audit a sample of closed tickets for real resolution.",
+   "measure": "support share of complaints next period"
+  },
+  {
+   "owner": "Delivery Operations",
+   "title": "Look at the late-night experience",
+   "text": "From 8 pm to midnight, the busiest part of the day per hour, the average is [[windows.avg_rating@window=night|dec2]] against [[windows.avg_rating@window=afternoon|dec2]] from noon to 8 pm. Check rider supply and delivery-time promises in that window.",
+   "measure": "average rating, 8 pm to midnight"
+  },
+  {
+   "owner": "Customer Experience",
+   "title": "Reply to every 1-star review properly",
+   "text": "[[kpis.one_star_unreplied#0|int]] one-star reviews got no reply, and [[kpis.one_star_top_template_share#0|pct]] of replies to 1-star reviews open with the same line. Cover every 1-star review with a reply that names the issue.",
+   "measure": "1-star reply rate and share of templated 1-star replies"
+  }
+ ]
+}

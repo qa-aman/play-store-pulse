@@ -41,6 +41,10 @@ The Dashboard artifact "Zomato Play Store Pulse October 2026" is at https://clau
 
 The `report-auditor` subagent (`.claude/agents/report-auditor.md`, Sonnet) checks one period: it recomputes every number on the dashboard and in the email from `data/raw/reviews_<label>.csv` and lists each mismatch with where it appears and the correct value. Run it after `/play-store-pulse` or `/draft-email`, before the email goes to leadership. It is read-only: the hook `.claude/hooks/report-auditor-guard.py` lets it write only to its memory folder (`.claude/agent-memory/report-auditor/`, committed), and allows Bash only an allowlist of read-only commands plus inline project Python whose imports and `open()` calls are checked.
 
+## Monthly run (pm-agent)
+
+`pm-agent` (`.claude/agents/pm-agent.md`, Sonnet, project memory in `.claude/agent-memory/pm-agent/`) runs the whole pack for one period: `play-store-pulse` without its email step, `draft-email` up to rendering, then `report-auditor`, and saves the Gmail draft only after a clean audit. On a mismatch it stops and tells the PM. Start it as the main session, `claude --agent pm-agent`, then give the period. Run as a background subagent it would lose `ArtifactData` (needed to write the dashboard) and the ability to ask questions (https://code.claude.com/docs/en/sub-agents). Email is never sent: the project hook `.claude/hooks/no-send-guard.py` (in `.claude/settings.json`) blocks any Gmail send, reply or forward call in every session here.
+
 ## Constraints to design around
 
 - **Most reviews are star-only:** in October 2026, only about 4,900 of 19,600 reviews had more than 20 characters of text. Ratings use every review. Themes can only use reviews with text.

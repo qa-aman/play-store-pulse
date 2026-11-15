@@ -1,0 +1,20 @@
+Bottom line: August to October averaged 3.93 stars, but users who wrote a review averaged 2.43, and their top complaint is customer support, not the app.
+
+Why it matters: These are service problems, so the fixes sit with Customer Experience and Delivery Operations. Replying properly to unhappy users is the quickest win.
+
+The numbers
+- 62,440 reviews, 19.8% of them 1-star (September: 20.3%, October: 18.7%)
+- Support in 28.5% of written complaints, late delivery in 17.6%
+- 8 pm to midnight, the busiest part of the day per hour, averages 3.86 against 4.03 from noon to 8 pm
+- 10,764 one-star reviews got no reply, and 49.8% of 1-star replies open with the same line
+
+Three asks (reply by 20-11-2026)
+1. Customer Experience: Let users reach a person
+2. Delivery Operations: Look at the late-night experience
+3. Customer Experience: Reply to every 1-star review properly
+
+In their words: "The app doesn't give you the option to chat with a support agent directly and makes you go through the chatbot. The chatbot also doesn't connect you to an..."
+
+Go deeper: https://claude.ai/artifact/SjTCyMUm8zJyrojBAhmNgz
+
+Reply with a different owner if one of these sits with another team.
