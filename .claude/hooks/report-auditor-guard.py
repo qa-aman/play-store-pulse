@@ -25,7 +25,7 @@ SAFE_MODULES = {"csv", "json", "re", "statistics", "collections", "datetime", "m
 CALL_ONLY = {"open", "type", "object"}  # allowed only as the direct target of a call, never passed around
 BANNED_NAMES = {"exec", "eval", "compile", "__import__", "getattr", "setattr", "delattr", "globals",
                 "locals", "vars", "breakpoint", "input", "memoryview", "help", "exit", "quit"}
-HEREDOC = re.compile(r"<<-?\s*'(\w+)'[^\n]*\n(.*?)\n\1[ \t]*(?=\n|$)", re.S)
+HEREDOC = re.compile(r"<<-?\s*'(\w+)'([^\n]*)\n(.*?)\n\1[ \t]*(?=\n|$)", re.S)
 
 
 def block(msg: str) -> None:
@@ -55,9 +55,9 @@ def check_python(code: str) -> None:
             bad = [n for n in names if n.split(".")[0] not in SAFE_MODULES]
             if bad or (isinstance(node, ast.ImportFrom) and node.level):
                 block(f"import of {bad or 'a relative module'} is not allowed. Allowed: {', '.join(sorted(SAFE_MODULES))}.")
-        elif isinstance(node, ast.Name) and node.id in BANNED_NAMES:
+        elif isinstance(node, ast.Name) and (node.id in BANNED_NAMES or node.id.startswith("_")):
             block(f"{node.id} is not allowed.")
-        elif isinstance(node, ast.Attribute) and node.attr.startswith("_"):
+        elif isinstance(node, ast.Attribute) and (node.attr.startswith("_") or node.attr in BANNED_NAMES):
             block(f"attribute {node.attr} is not allowed.")
         elif isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == "open":
             mode = node.args[1] if len(node.args) > 1 else next((k.value for k in node.keywords if k.arg == "mode"), None)
@@ -68,14 +68,18 @@ def check_python(code: str) -> None:
 
 
 def check_bash(cmd: str) -> None:
-    heredocs = [m.group(2) for m in HEREDOC.finditer(cmd)]
-    shell = HEREDOC.sub("<<HEREDOC", cmd)
+    heredocs = [m.group(3) for m in HEREDOC.finditer(cmd)]
+    # Keep the rest of each heredoc's opening line: it is shell and must be checked.
+    shell = HEREDOC.sub(lambda m: "<<HEREDOC" + m.group(2), cmd)
     if cmd.count("<<") != len(heredocs):
         block("heredocs must use a quoted delimiter, e.g. <<'PY'.")
     if re.search(r"\$\(|`|<\(|>\(|\$\{|\\\n", shell):
         block("no command substitution, process substitution or line continuations.")
+    if re.search(r"[\n\r]", shell):
+        block("put the shell part on one line; line breaks are allowed only inside a quoted heredoc.")
     lex = shlex.shlex(shell.replace("<<HEREDOC", " HEREDOC_MARK "), posix=True, punctuation_chars=";&|<>")
     lex.whitespace_split = True
+    lex.commenters = ""
     try:
         tokens = list(lex)
     except ValueError as e:
@@ -86,6 +90,8 @@ def check_bash(cmd: str) -> None:
         t = tokens[i]
         if t in SEPARATORS:
             commands.append(cur); cur = []
+        elif re.fullmatch(r"[;&|]+", t):
+            block(f"shell operator {t!r} is not allowed. Use only &&, ||, ; or |.")
         elif re.fullmatch(r"[<>&]+", t) or (t.isdigit() and i + 1 < len(tokens) and re.fullmatch(r"[<>&]+", tokens[i + 1])):
             op = t
             if t.isdigit():
@@ -103,7 +109,7 @@ def check_bash(cmd: str) -> None:
     for argv in commands:
         if not argv:
             continue
-        if re.fullmatch(r"[A-Za-z_]\w*=.*", argv[0]):
+        if re.fullmatch(r"[A-Za-z_]\w*=.*", argv[0]) or "#" in argv[0]:
             block("environment variable assignments are not allowed.")
         prog = argv[0]
         if prog in READ_ONLY:
