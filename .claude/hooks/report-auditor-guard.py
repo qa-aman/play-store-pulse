@@ -55,7 +55,21 @@ def check_python(code: str) -> None:
     called = {id(n.func) for n in ast.walk(tree) if isinstance(n, ast.Call)}
     aliases = {(a.asname or a.name).split(".")[0] for n in ast.walk(tree) if isinstance(n, ast.Import) for a in n.names}
     attr_bases = {id(n.value) for n in ast.walk(tree) if isinstance(n, ast.Attribute)}
+    top_imports = {id(n) for n in tree.body if isinstance(n, (ast.Import, ast.ImportFrom))}
     for node in ast.walk(tree):
+        if isinstance(node, (ast.Import, ast.ImportFrom)):
+            if id(node) not in top_imports:
+                block("imports are allowed only at the top level of the code.")
+            if isinstance(node, ast.Import) and any("." in a.name for a in node.names):
+                block("dotted imports are not allowed; import the module itself.")
+            if isinstance(node, ast.ImportFrom) and (node.level or node.module not in SAFE_MODULES):
+                block(f"from-imports are allowed only from {', '.join(sorted(SAFE_MODULES))}.")
+            for a in node.names:
+                for n in (a.name, a.asname or ""):
+                    if n.startswith("_") or n in BANNED_NAMES or n in CALL_ONLY:
+                        block(f"importing or naming {n} is not allowed.")
+        if isinstance(node, ast.Attribute) and node.attr in aliases | SAFE_MODULES:
+            block(f"attribute {node.attr} names a module and is not allowed.")
         if isinstance(node, ast.Name) and node.id in aliases and id(node) not in attr_bases \
                 and not isinstance(node.ctx, ast.Store):
             block(f"module {node.id} may only be used as {node.id}.<name>, never passed around.")
@@ -149,7 +163,7 @@ def check_bash(cmd: str) -> None:
             args = [a for a in argv[1:] if a != "HEREDOC_MARK"]
             if not args or args[0] != "-I":
                 block("run Python as `.venv/bin/python -I -c '...'` or `.venv/bin/python -I - <<'PY'`.")
-            if args[1:2] == ["-c"] and len(args) >= 3:
+            if args[1:2] == ["-c"] and len(args) == 3:
                 py_code.append(args[2])
             elif args[1:] == ["-"] and heredocs:
                 pass
