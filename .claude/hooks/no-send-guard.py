@@ -22,4 +22,10 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except SystemExit:
+        raise
+    except Exception as e:  # fail closed: a guard that crashes must block, not allow
+        print(f"no-send-guard could not check this call ({e}); blocked.", file=sys.stderr)
+        sys.exit(2)
