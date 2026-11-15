@@ -21,7 +21,7 @@ from pathlib import Path
 SKILL = Path(__file__).resolve().parent.parent
 TEMPLATE = SKILL / "assets" / "dashboard.html"
 DATASETS = {
-    "kpis": ("Headline numbers", "Review count, ratings, text share and reply figures"),
+    "kpis": ("Headline numbers", "Review count, ratings, text share, reply figures and the Play Store rating snapshot"),
     "stars": ("Reviews by star rating", "Count and share of reviews at each star rating, and how many of each have text"),
     "complaints": ("Complaint themes", "Keyword-matched themes in written 1 and 2-star reviews, with a suggested owner and one masked quote each"),
     "praise": ("Praise themes", "Keyword-matched themes in written 4 and 5-star reviews"),
@@ -140,6 +140,7 @@ def main() -> None:
         "HEADLINE": expand(narrative["headline"], data), "COMPARISON_NOTE": expand(narrative["comparison_note"], data),
         "RELEASE_NOTE": expand(narrative["release_note"], data), "ASKS_HEADING": html.escape(narrative["asks_heading"]),
         "ACTIONS": "\n".join(cards),
+        "STORE_ASOF": (f'on {k["store_snapshot_at"].split()[0]}' if k.get("store_snapshot_at") else "not captured"),
     }
     page = TEMPLATE.read_text(encoding="utf-8")
     for key, val in fills.items():

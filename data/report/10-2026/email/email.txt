@@ -1,17 +1,17 @@
-Bottom line: October averaged 3.98 stars, but users who wrote a review averaged 2.48, and their top complaint is customer support, not the app.
+Bottom line: Approve three owners by 20-11-2026; targets apply to November. October's review average rose to 3.98 from 3.91; support is still the top complaint.
 
-Why it matters: These are service problems, so the fixes sit with Customer Experience and Delivery Operations. Replying properly to unhappy users is the quickest win.
+Why it matters: Support is the complaint we can fix fastest: 94 support complaints mention the bot or reaching a human.
 
 The numbers
-- 19,593 reviews, 18.7% of them 1-star
-- Support in 26.9% of written complaints, late delivery in 16.5%
-- 8 pm to midnight, the busiest part of the day per hour, averages 3.89 against 4.07 from noon to 8 pm
-- 2,225 one-star reviews got no reply, and 54.6% of 1-star replies open with the same line
+- Support in 26.9% of written complaints, down from 29.3%
+- Since regular replies began on 07-10-2026, 49.1% of 2,860 one-star reviews got a reply
+- Reviews written 8 pm to midnight average 3.89, noon to 8 pm 4.07
+- Play Store page: 4.57 on 15-11-2026, weighted to recent ratings
 
 Three asks (reply by 20-11-2026)
-1. Customer Experience: Fix how tickets get closed
-2. Delivery Operations: Look at the late-night experience
-3. Customer Experience: Reply to every 1-star review properly
+1. Customer Experience: Add a human agent route. Target: bot complaints from 94 to under 50
+2. Delivery Operations: Pull dinner-peak late deliveries by order hour. Target: night gap from 0.18 to under 0.10
+3. Customer Experience: Reply to every 1-star. Target: from 49% to 80% replied
 
 In their words: "The app doesn't give you the option to chat with a support agent directly and makes you go through the chatbot. The chatbot also doesn't connect you to an..."
 

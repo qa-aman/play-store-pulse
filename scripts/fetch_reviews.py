@@ -6,11 +6,12 @@ For production on our own app, swap this for the Play Console monthly reviews ex
 
 import argparse
 import csv
+import json
 import sys
 from datetime import datetime, timedelta
 from pathlib import Path
 
-from google_play_scraper import Sort, reviews
+from google_play_scraper import Sort, app, reviews
 
 FIELDS = ["reviewId", "at", "score", "content", "thumbsUpCount", "appVersion", "replyContent", "repliedAt"]
 BATCH = 200
@@ -46,6 +47,18 @@ def fetch(app_id: str, lang: str, country: str, start: datetime, end: datetime) 
     return sorted(seen.values(), key=lambda r: r["at"], reverse=True)
 
 
+def save_store(app_id: str, lang: str, country: str, path: Path) -> None:
+    """Save the rating the Play Store shows today. It is recency-weighted by Google (formula unpublished) and
+    specific to the country, so it is a snapshot at fetch time, not a figure for the period."""
+    a = app(app_id, lang=lang, country=country)
+    snap = {"store_rating": round(a["score"], 2), "store_ratings_total": a["ratings"],
+            "store_histogram": a["histogram"], "store_version": a["version"], "country": country,
+            "snapshot_at": datetime.now().strftime("%d-%m-%Y %H:%M")}
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(snap, indent=1), encoding="utf-8")
+    print(f"Store rating {snap['store_rating']} from {snap['store_ratings_total']:,} ratings, saved to {path}")
+
+
 def save(rows: list[dict], path: Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", newline="", encoding="utf-8") as f:
@@ -70,6 +83,8 @@ def main() -> None:
     p.add_argument("--lang", default="en")
     p.add_argument("--country", default="in")
     p.add_argument("--out", type=Path, help="CSV path (default: data/raw/reviews_<MM-YYYY>.csv)")
+    p.add_argument("--store-only", action="store_true",
+                   help="only save today's Play Store rating to data/raw/store_<label>.json, skip the reviews")
     args = p.parse_args()
 
     if bool(args.from_month) != bool(args.to_month) or bool(args.from_date) != bool(args.to_date):
@@ -93,6 +108,12 @@ def main() -> None:
         start, end = month_bounds(args.month)
         label = args.month
     out = args.out or Path("data/raw") / f"reviews_{label}.csv"
+    default_app = args.app_id == p.get_default("app_id")
+    store_path = (Path("data/raw") / f"store_{label}.json" if default_app
+                  else out.with_name(f"store_{args.app_id}_{label}.json"))
+    save_store(args.app_id, args.lang, args.country, store_path)
+    if args.store_only:
+        return
     print(f"Fetching {label} {args.lang}-{args.country} reviews for {args.app_id}", file=sys.stderr)
     rows = fetch(args.app_id, args.lang, args.country, start, end)
     if not rows:

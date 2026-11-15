@@ -23,7 +23,7 @@ python3 -m venv .venv && .venv/bin/pip install -r requirements.txt   # setup
 .venv/bin/python scripts/build_report_data.py --label 10-2026        # -> data/report/<label>/*.json
 ```
 
-This builds 8 summary files (`kpis, stars, complaints, praise, hours, daily, versions, loudest`), each shaped `{rows, meta}`, with the script's own code in `meta`. Themes are keyword regexes in `COMPLAINTS` and `PRAISE` on reviews with more than 20 characters of text. Quotes are masked and never reused across themes.
+`fetch_reviews.py` also saves `data/raw/store_<label>.json`, the Play Store rating shown in India on the fetch day (`--store-only` takes just that). This builds 8 summary files (`kpis, stars, complaints, praise, hours, daily, versions, loudest`), each shaped `{rows, meta}`, with the script's own code in `meta`. Themes are keyword regexes in `COMPLAINTS` and `PRAISE` on reviews with more than 20 characters of text. Quotes are masked and never reused across themes.
 
 ## Leadership dashboard
 

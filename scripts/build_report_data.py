@@ -14,6 +14,7 @@ from datetime import datetime
 from pathlib import Path
 
 MIN_TEXT = 20  # characters; shorter reviews count as star-only
+REPLY_STEADY = 25  # % of a day's 1-star reviews replied, for "regular replies started"
 
 COMPLAINTS = [
     ("support", "Customer support", "Customer Experience", r"support|customer care|customer service|\bchat\b|\bagent\b|helpline"),
@@ -34,6 +35,8 @@ PRAISE = [
     ("variety", "Choice of restaurants", r"variety|options|restaurants|choices"),
     ("food", "Tasty food", r"tasty|delicious|taste|fresh|\bhot\b"),
 ]
+# Support complaints that are about the bot or reaching a human; the counting rule for the "human agent route" ask.
+BOT = r"chat ?bot|\bbot\b|\bai\b|human|real person|live agent"
 MASKS = [
     (re.compile(r"[\w.+-]+@[\w-]+\.[\w.]+"), "[email]"),
     (re.compile(r"(\+?91[\s-]?)?\b\d{10}\b"), "[phone]"),
@@ -102,7 +105,7 @@ def cut(text: str, limit: int = 320) -> str:
     return text[:limit].rsplit(" ", 1)[0].rstrip(",.;:!- ") + "..."
 
 
-def build(rows: list[dict]) -> dict[str, list[dict]]:
+def build(rows: list[dict], store: dict | None = None) -> dict[str, list[dict]]:
     n = len(rows)
     text = [r for r in rows if r["has_text"]]
     star_only = [r for r in rows if not r["has_text"]]
@@ -112,6 +115,23 @@ def build(rows: list[dict]) -> dict[str, list[dict]]:
     replied = [r for r in rows if r["replyContent"]]
     openings = Counter(r["replyContent"][:50] for r in replied)
     one_replied = [r for r in one if r["replyContent"]]
+    low_star = [r for r in rows if r["stars"] <= 2]
+    # Regular replying can start partway through a period. It counts as started on the first review day from
+    # which every later day has at least REPLY_STEADY % of its 1-star reviews replied; backlog figures from then
+    # on show the real run-rate.
+    one_days = defaultdict(list)
+    for r in one:
+        one_days[r["dt"].date()].append(bool(r["replyContent"]))
+    first_reply = None
+    for d in sorted(one_days, reverse=True):
+        if sum(one_days[d]) / len(one_days[d]) * 100 < REPLY_STEADY:
+            break
+        first_reply = d
+    one_after = [r for r in one if first_reply and r["dt"].date() >= first_reply]
+    # A review whose time is after its reply was edited after the reply. The earlier rating is not public,
+    # so this counts updates and their rating now, not a rating change.
+    updated = [r for r in replied if r["repliedAt"]
+               and r["dt"] > datetime.strptime(r["repliedAt"], "%d-%m-%Y %H:%M")]
     one_openings = Counter(r["replyContent"][:50] for r in one_replied)
     # A review edited after its reply carries the edit time, so its reply can predate it; those have no reply time.
     lag = [m for m in (
@@ -141,6 +161,23 @@ def build(rows: list[dict]) -> dict[str, list[dict]]:
         "one_star_top_template_share": (share(one_openings.most_common(1)[0][1], len(one_replied))
                                         if one_replied else 0.0),
         "median_reply_minutes": round(st.median(lag)) if lag else None,
+        "low_star_reply_rate": share(sum(1 for r in low_star if r["replyContent"]), len(low_star)),
+        "low_star_unreplied": sum(1 for r in low_star if not r["replyContent"]),
+        "updated_after_reply": len(updated),
+        "updated_after_reply_share": share(len(updated), len(replied)),
+        "updated_after_reply_high": sum(1 for r in updated if r["stars"] >= 4),
+        "support_bot_mentions": sum(1 for r in neg if re.search(COMPLAINTS[0][3], r["low"]) and re.search(BOT, r["low"])),
+        "replies_steady_from": first_reply.strftime("%d-%m-%Y") if first_reply else None,
+        "one_star_since_replies_steady": len(one_after),
+        "one_star_reply_rate_since_replies_steady": share(sum(1 for r in one_after if r["replyContent"]), len(one_after)),
+        "one_star_unreplied_since_replies_steady": sum(1 for r in one_after if not r["replyContent"]),
+        "one_star_unreplied_per_day_since_replies_steady": (round(sum(1 for r in one_after if not r["replyContent"])
+                                                               / len({r["dt"].date() for r in one_after}))
+                                                         if one_after else None),
+        "store_rating": store["store_rating"] if store else None,
+        "store_ratings_total": store["store_ratings_total"] if store else None,
+        "store_gap": round(store["store_rating"] - st.mean(r["stars"] for r in rows), 2) if store else None,
+        "store_snapshot_at": store["snapshot_at"] if store else None,
     }]
 
     stars = [{"stars": s, "reviews": sum(1 for r in rows if r["stars"] == s),
@@ -208,9 +245,14 @@ def main() -> None:
     out = Path("data/report") / args.label
     out.mkdir(parents=True, exist_ok=True)
     code = Path(__file__).read_text(encoding="utf-8")
-    for name, rows in build(load(src)).items():
+    store_path = Path("data/raw") / f"store_{args.label}.json"
+    store = json.loads(store_path.read_text(encoding="utf-8")) if store_path.exists() else None
+    if not store:
+        print(f"No {store_path.name}: the store rating tile will be empty. "
+              f"Run fetch_reviews.py with --store-only for this range.")
+    for name, rows in build(load(src), store).items():
         meta = [{"label": "build_report_data.py", "value": code, "type": "code", "lang": "python"},
-                {"label": "Input", "value": src.name}]
+                {"label": "Input", "value": src.name + (f", {store_path.name}" if store else "")}]
         (out / f"{name}.json").write_text(json.dumps({"rows": rows, "meta": meta}, ensure_ascii=False, indent=1),
                                           encoding="utf-8")
         print(f"{name}: {len(rows)} rows")

@@ -1,26 +1,26 @@
 {
  "headline": "Their top complaint is customer support, not the app.",
- "comparison_note": "This is the first month tracked, so there is no change from the month before yet. From November, each tile will show the change.",
+ "comparison_note": "These tiles show October 2026 only. For comparison, the September 2026 report had an average of 3.91 stars across 19,743 reviews; October 2026 averaged [[kpis.avg_rating#0|dec2]].",
  "release_note": "No October release stands out. The main versions all sit close to the month average. Reviews with no app version are the outlier, and are worth a look with the app team.",
  "asks_heading": "Three asks for November",
  "actions": [
   {
    "owner": "Customer Experience",
-   "title": "Fix how tickets get closed",
-   "text": "Support comes up in [[complaints.share@code=support|pct]] of written complaints, ahead of late delivery. Users describe tickets closed with no fix. Audit a sample of closed tickets for real resolution.",
-   "measure": "support share of complaints in November"
+   "title": "Add a human agent route. Target: bot complaints from 94 to under 50",
+   "text": "Support is in [[complaints.share@code=support|pct]] of written complaints, ahead of late delivery. [[kpis.support_bot_mentions#0|int]] of those name the chatbot, AI or a human agent. Offer a human route when the bot cannot solve the issue. The target halves that count.",
+   "measure": "support complaints that also mention bot, chatbot, AI, human, real person or live agent"
   },
   {
    "owner": "Delivery Operations",
-   "title": "Look at the late-night experience",
-   "text": "From 8 pm to midnight, the busiest part of the day per hour, the average is [[windows.avg_rating@window=night|dec2]] against [[windows.avg_rating@window=afternoon|dec2]] from noon to 8 pm. Check rider supply and delivery-time promises in that window.",
-   "measure": "average rating, 8 pm to midnight"
+   "title": "Pull dinner-peak late deliveries by order hour. Target: night gap from 0.18 to under 0.10",
+   "text": "Reviews written from 8 pm to midnight, the stretch with the most reviews per hour, average [[windows.avg_rating@window=night|dec2]] against [[windows.avg_rating@window=afternoon|dec2]] from noon to 8 pm. The hour is when the review was written, not when the order arrived, so first pull late-delivery share by order hour, then check rider supply and delivery-time promises at dinner.",
+   "measure": "rating gap between reviews written 8 pm to midnight and noon to 8 pm, and late-delivery share by order hour"
   },
   {
    "owner": "Customer Experience",
-   "title": "Reply to every 1-star review properly",
-   "text": "[[kpis.one_star_unreplied#0|int]] one-star reviews got no reply, and [[kpis.one_star_top_template_share#0|pct]] of replies to 1-star reviews open with the same line. Cover every 1-star review with a reply that names the issue.",
-   "measure": "1-star reply rate and share of templated 1-star replies"
+   "title": "Reply to every 1-star. Target: from 49% to 80% replied",
+   "text": "From 07-10-2026 to 31-10-2026, when regular replies were in place, [[kpis.one_star_reply_rate_since_replies_steady#0|pct]] of 1-star reviews got a reply and [[kpis.one_star_unreplied_since_replies_steady#0|int]] did not, about [[kpis.one_star_unreplied_per_day_since_replies_steady#0|int]] a day. Decide whether to add staff or automate a reply that names the issue. Across the whole month the rate is [[kpis.one_star_reply_rate#0|pct]].",
+   "measure": "share of 1-star reviews with a reply, counted from the day regular replies started (07-10-2026 in October)"
   }
  ]
 }

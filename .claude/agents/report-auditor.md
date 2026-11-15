@@ -37,6 +37,8 @@ Write your own Python with the `csv` module and run it as `.venv/bin/python -I -
 - every complaint and praise theme: count and share, on the same denominator the builder uses;
 - hours, daily rows, the `windows` calc (weighted by reviews per hour) and `worst_days` (top 3 days by 1-star share);
 - reply rate, 1-star reply rate, 1-star unreplied, median reply minutes, top reply template shares;
+- 1 and 2-star reply rate and unreplied count; reviews updated after a reply (review time later than `repliedAt`), their share of replied reviews and how many are now 4 or 5 stars;
+- the Play Store rating fields (`store_rating`, `store_ratings_total`, `store_snapshot_at`) against `data/raw/store_<label>.json`, and `store_gap` as store rating minus the period average. Flag any text that treats the store rating as a figure for the period: it is a snapshot on the fetch day, recency-weighted by Google;
 - version rows (top 8 by reviews, empty version = "Not given") and the loudest 5 by thumbs-up;
 - every comparison number taken from another period, from that period's raw CSV if it exists, else from its JSON (say which).
 

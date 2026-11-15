@@ -47,4 +47,5 @@ Fixed words like "8 pm to midnight" are fine as text.
 - Compare parts of the day per hour, not in total: night and morning are 4 hours, early and afternoon are 8. Say "busiest" or "most" only if it holds per hour, and say "per hour".
 - Check every superlative (most, busiest, worst, top, again) against this period's data before writing it. A claim like "again" or "second period" needs the earlier period's file.
 - `median_reply_minutes` is empty when no reply time is valid (an edited review can carry a date after its reply). Then say reply times are not available, never that replies are fast.
+- `store_rating` is the Play Store rating on the fetch day, weighted by Google towards recent ratings. Never call it the period's rating, and never set it against the period average as if one were wrong; `store_gap` is the difference. `updated_after_reply` counts edits, not a rating change: the earlier rating is not public.
 - Never quote a review in the narrative; quotes live in `complaints.json` and `loudest.json`, already masked.

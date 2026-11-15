@@ -1,12 +1,12 @@
 {
- "subject": "Play Store Pulse October 2026: support tops complaints, 3 asks",
- "bottom_line": "October averaged [[kpis.avg_rating#0|dec2]] stars, but users who wrote a review averaged [[kpis.text_avg#0|dec2]], and their top complaint is customer support, not the app.",
- "why_it_matters": "These are service problems, so the fixes sit with Customer Experience and Delivery Operations. Replying properly to unhappy users is the quickest win.",
+ "subject": "Play Store Pulse October: approve 3 owners by 20-11",
+ "bottom_line": "Approve three owners by 20-11-2026; targets apply to November. October's review average rose to [[kpis.avg_rating#0|dec2]] from [[09-2026:kpis.avg_rating#0|dec2]]; support is still the top complaint.",
+ "why_it_matters": "Support is the complaint we can fix fastest: [[kpis.support_bot_mentions#0|int]] support complaints mention the bot or reaching a human.",
  "numbers": [
-  "[[kpis.reviews#0|int]] reviews, [[kpis.one_star_share#0|pct]] of them 1-star",
-  "Support in [[complaints.share@code=support|pct]] of written complaints, late delivery in [[complaints.share@code=late|pct]]",
-  "8 pm to midnight, the busiest part of the day per hour, averages [[windows.avg_rating@window=night|dec2]] against [[windows.avg_rating@window=afternoon|dec2]] from noon to 8 pm",
-  "[[kpis.one_star_unreplied#0|int]] one-star reviews got no reply, and [[kpis.one_star_top_template_share#0|pct]] of 1-star replies open with the same line"
+  "Support in [[complaints.share@code=support|pct]] of written complaints, down from [[09-2026:complaints.share@code=support|pct]]",
+  "Since regular replies began on 07-10-2026, [[kpis.one_star_reply_rate_since_replies_steady#0|pct]] of [[kpis.one_star_since_replies_steady#0|int]] one-star reviews got a reply",
+  "Reviews written 8 pm to midnight average [[windows.avg_rating@window=night|dec2]], noon to 8 pm [[windows.avg_rating@window=afternoon|dec2]]",
+  "Play Store page: [[kpis.store_rating#0|dec2]] on 15-11-2026, weighted to recent ratings"
  ],
  "quote": "complaints:support"
 }

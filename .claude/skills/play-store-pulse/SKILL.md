@@ -28,7 +28,7 @@ No input means last month (`fetch_reviews.py` defaults to it). If the range is a
 
 If `data/raw/reviews_<label>.csv` already exists, ask before fetching it again. The scraper reads newest first, so time depends on how far back the range starts: about 2 seconds per day between today and the start date (October from mid-November took 85 s). Run it with `run_in_background` when the start is more than about 60 days back, and wait for the notification.
 
-The scraper is google-play-scraper: public Play Store page, English reviews from India only (`--lang en --country in`).
+The scraper is google-play-scraper: public Play Store page, English reviews from India only (`--lang en --country in`). It also saves `data/raw/store_<label>.json`, the rating the Play Store shows in India on the fetch day (recency-weighted by Google). If the reviews CSV already exists and you skip the fetch, run `fetch_reviews.py <fetch arguments> --store-only` to take the snapshot.
 
 ## 3. Build the data
 
