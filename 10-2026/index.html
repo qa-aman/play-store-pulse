@@ -25,6 +25,7 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); }
 body { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
 main { max-width: 1080px; margin: 0 auto; padding: 24px 16px 48px; }
 .pp-foot { margin-top: 40px; font-size: 13px; color: var(--color-fg-muted); }
+.pp-foot a { color: #cf4a57; }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
 <script>
@@ -71,7 +72,7 @@ main { max-width: 1080px; margin: 0 auto; padding: 24px 16px 48px; }
 }
 .pp-head { display: flex; flex-direction: column; gap: 12px; background: var(--z-brand-wash); border: 1px solid color-mix(in srgb, #EF4F5F 18%, var(--color-border-line)); border-radius: calc(var(--z-r) * 2); padding: 20px; }
 .pp-brandrow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
-.pp-eyebrow { font-size: var(--z-12); font-weight: 600; color: var(--z-brand); letter-spacing: .08em; text-transform: uppercase; }
+.pp-eyebrow { font-size: var(--z-12); font-weight: 600; color: var(--z-brand-deep); letter-spacing: .08em; text-transform: uppercase; }
 .pp-pill { font-size: var(--z-12); font-weight: 500; padding: 3px 10px; border-radius: 999px; background: var(--color-panel); border: 1px solid var(--color-border-line); color: var(--color-fg-muted); }
 .pp-title { font-family: var(--z-font); font-weight: 600; font-size: var(--z-28); line-height: 1.2; letter-spacing: -.01em; margin: 0; text-wrap: balance; }
 .pp-lede { font-size: var(--z-18); line-height: 1.45; margin: 0; max-width: 68ch; text-wrap: pretty; color: var(--color-fg); }
@@ -97,6 +98,8 @@ main { max-width: 1080px; margin: 0 auto; padding: 24px 16px 48px; }
 .pp-chart .domain { stroke: var(--cds-chart-axis); }
 .pp-chart .tick line { stroke: var(--cds-chart-grid); }
 .pp-tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); box-shadow: var(--cds-shadow-popover); border-radius: var(--z-r); padding: 8px 12px; font-size: var(--z-12); font-family: var(--z-font); color: var(--color-fg); white-space: nowrap; z-index: 2; display: flex; flex-direction: column; gap: 2px; }
+.pp-tip[hidden] { display: none; }
+.pp a { color: var(--z-brand-deep); text-decoration: underline; text-underline-offset: 2px; }
 .pp-tip div:first-child { font-weight: 600; }
 .pp-tip span { color: var(--cds-text-secondary); }
 .pp-wrap { overflow-x: auto; background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--z-r); }
@@ -119,9 +122,25 @@ main { max-width: 1080px; margin: 0 auto; padding: 24px 16px 48px; }
 .pp-actions p { margin: 0; line-height: 1.5; }
 .pp-chip { align-self: flex-start; font-size: var(--z-12); font-weight: 500; padding: 3px 10px; border-radius: 999px; background: var(--z-brand-tint); color: var(--z-brand-deep); }
 .pp details { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--z-r); padding: 12px 16px; }
-.pp details summary { cursor: pointer; color: var(--color-fg); font-weight: 500; }
+.pp details summary { cursor: pointer; color: var(--color-fg); font-weight: 500; display: block; padding: 12px 0; margin: -12px 0; min-height: 44px; box-sizing: border-box; }
 .pp details ul { margin: 8px 0 0; padding-left: 1.2em; line-height: 1.6; color: var(--color-fg-muted); }
 [data-dash-source-state=refreshing] { opacity: .5; }
+.pp-halo { paint-order: stroke; stroke: var(--color-panel); stroke-width: 4px; stroke-linejoin: round; }
+@media (max-width: 480px) {
+  #complaints .pp-wrap { background: none; border: 0; overflow: visible; }
+  #complaints .pp-table, #complaints .pp-table tbody { display: block; }
+  #complaints .pp-table thead { display: none; }
+  #complaints .pp-table tr { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--z-r); padding: 12px; margin-bottom: 10px; }
+  #complaints .pp-table td { padding: 0; border: 0; }
+  #complaints .pp-table td.pp-theme { grid-column: 1; white-space: normal; }
+  #complaints .pp-table td.pp-num:nth-child(2) { grid-column: 2; grid-row: 1; }
+  #complaints .pp-table td.pp-num:nth-child(3) { display: none; }
+  #complaints .pp-table td.pp-owner { grid-column: 1 / -1; }
+  #complaints .pp-table td.pp-quote { grid-column: 1 / -1; min-width: 0; max-width: none; }
+}
+.pp-tiles > .pp-card:last-child:nth-child(odd) { grid-column: 1 / -1; }
+@media (min-width: 560px) { .pp-tiles > .pp-card:last-child:nth-child(odd) { grid-column: auto; } }
+@media (max-width: 480px) { #releases .pp-table th, #releases .pp-table td { padding: 10px 6px; font-size: var(--z-13); } #releases .pp-table th { font-size: var(--z-12); } }
 @media (max-width: 480px) { .pp-loud li { grid-template-columns: 1fr; gap: 6px; } .pp-head { padding: 16px; } }
 </style>
 
@@ -129,7 +148,7 @@ main { max-width: 1080px; margin: 0 auto; padding: 24px 16px 48px; }
   <header class="pp-head" id="summary">
     <div class="pp-brandrow"><span class="pp-eyebrow">Play Store Pulse</span><span class="pp-pill">October 2026</span><span class="pp-pill">Android · English · India</span></div>
     <h1 class="pp-title">What Zomato users told us in October 2026</h1>
-    <p class="pp-lede" data-read lang="en">Reviews in October 2026 averaged <b data-draw="num" data-source="kpis" data-field="avg_rating" data-row="0" data-fmt="dec2">—</b> stars across <b data-draw="num" data-source="kpis" data-field="reviews" data-row="0" data-fmt="int">—</b> reviews, but the <b data-draw="num" data-source="kpis" data-field="text_reviews" data-row="0" data-fmt="int">—</b> people who wrote something averaged <b class="pp-red" data-draw="num" data-source="kpis" data-field="text_avg" data-row="0" data-fmt="dec2">—</b>. Their top complaint is customer support, not the app.</p>
+    <p class="pp-lede" data-read lang="en">Reviews in October 2026 averaged <b data-draw="num" data-source="kpis" data-field="avg_rating" data-row="0" data-fmt="dec2">—</b> stars across <b data-draw="num" data-source="kpis" data-field="reviews" data-row="0" data-fmt="int">—</b> reviews, but the <b data-draw="num" data-source="kpis" data-field="text_reviews" data-row="0" data-fmt="int">—</b> reviews with text averaged <b class="pp-red" data-draw="num" data-source="kpis" data-field="text_avg" data-row="0" data-fmt="dec2">—</b>. Their top complaint is customer support, not the app.</p>
   </header>
 
   <section class="pp-section" id="scorecard">
@@ -142,7 +161,7 @@ main { max-width: 1080px; margin: 0 auto; padding: 24px 16px 48px; }
       <div class="pp-card"><span class="pp-label">Reviews with written text</span><span class="pp-big" data-draw="num" data-source="kpis" data-field="text_share" data-row="0" data-fmt="pct">—</span><span class="pp-muted">More than 20 characters</span></div>
     </div>
     <p class="pp-muted">The Play Store rating is a snapshot on the day the data was pulled, not a figure for the period, and Google does not publish how it weights recent ratings. Track it next to the period average, never instead of it.</p>
-    <p class="pp-muted">This is the first month tracked, so there is no change from the month before yet. From November, each tile will show the change.</p>
+    <p class="pp-muted">These tiles show October 2026 only. For comparison, the September 2026 report had an average of 3.91 stars across 19,743 reviews; October 2026 averaged <b data-draw="num" data-source="kpis" data-field="avg_rating" data-row="0" data-fmt="dec2">—</b>.</p>
   </section>
 
   <section class="pp-section" id="two-ratings">
@@ -179,11 +198,11 @@ main { max-width: 1080px; margin: 0 auto; padding: 24px 16px 48px; }
     <p class="pp-text" data-read lang="en">From 8 pm to midnight, across <b data-draw="num" data-source="windows" data-field="reviews" data-where="window=night" data-fmt="int">—</b> reviews, the average is <b data-draw="num" data-source="windows" data-field="avg_rating" data-where="window=night" data-fmt="dec2">—</b>, against <b data-draw="num" data-source="windows" data-field="avg_rating" data-where="window=afternoon" data-fmt="dec2">—</b> from noon to 8 pm. Between midnight and 8 am it is <b data-draw="num" data-source="windows" data-field="avg_rating" data-where="window=early" data-fmt="dec2">—</b>.</p>
     <div class="pp-two">
       <div class="pp-card">
-        <span class="pp-label">Average rating by hour of the review (IST)</span>
+        <span class="pp-label">Average rating by hour of the review (hour of day, IST)</span>
         <div class="pp-chart" id="hours-chart" data-draw="hours" data-source="hours kpis" role="img" aria-label="Average rating by hour of day, with the period average as a reference line"></div>
       </div>
       <div class="pp-card">
-        <span class="pp-label">1-star share by day, worst 3 days marked</span>
+        <span class="pp-label">1-star share by day of October 2026, worst 3 days marked</span>
         <div class="pp-chart" id="daily-chart" data-draw="daily" data-source="daily kpis worst_days" role="img" aria-label="Share of 1-star reviews for each day of the period, with the period share as a reference line"></div>
       </div>
     </div>
@@ -200,12 +219,13 @@ main { max-width: 1080px; margin: 0 auto; padding: 24px 16px 48px; }
       <div class="pp-card"><span class="pp-label">Reviews updated after a reply</span><span class="pp-big" data-draw="num" data-source="kpis" data-field="updated_after_reply" data-row="0" data-fmt="int">—</span><span class="pp-muted"><span data-draw="num" data-source="kpis" data-field="updated_after_reply_share" data-row="0" data-fmt="pct">—</span> of replied reviews; <span data-draw="num" data-source="kpis" data-field="updated_after_reply_high" data-row="0" data-fmt="int">—</span> of them now at 4 or 5 stars</span></div>
       <div class="pp-card"><span class="pp-label">Replies that open with the same line</span><span class="pp-big pp-warn" data-draw="num" data-source="kpis" data-field="top_template_share" data-row="0" data-fmt="pct">—</span><span class="pp-muted">The 3 most used openings cover <span data-draw="num" data-source="kpis" data-field="top3_template_share" data-row="0" data-fmt="pct">—</span></span></div>
     </div>
-    <p class="pp-muted">Google reports that a reply to a negative review raises that review's rating by 0.7 stars on average (Google Play, 2019). The store does not show a review's earlier rating, so this page counts updates, not the change.</p>
+    <p class="pp-muted">Google reports that a reply to a negative review raises that review's rating by 0.7 stars on average (<a href="https://android-developers.googleblog.com/2019/05/whats-new-in-play.html" target="_blank" rel="noopener">Google Play, 2019</a>). The store does not show a review's earlier rating, so this page counts updates, not the change.</p>
   </section>
 
   <section class="pp-section" id="releases">
     <h2 class="pp-h2">Release check</h2>
     <p class="pp-text" data-read lang="en">No October release stands out. The main versions all sit close to the month average. Reviews with no app version are the outlier, and are worth a look with the app team.</p>
+    <p class="pp-muted">Shows the 8 versions with the most reviews. A newer version with fewer reviews may not appear.</p>
     <div class="pp-wrap">
       <table class="pp-table" data-source="versions" data-row-key="version">
         <thead><tr><th data-field="version">App version</th><th class="pp-num" data-field="reviews">Reviews</th><th class="pp-num" data-field="avg_rating">Average rating</th><th class="pp-num" data-field="one_star_share">1-star share</th></tr></thead>
@@ -233,14 +253,14 @@ main { max-width: 1080px; margin: 0 auto; padding: 24px 16px 48px; }
       <div class="pp-card">
         <span class="pp-chip">Delivery Operations</span>
         <h3>Pull dinner-peak late deliveries by order hour. Target: night gap from 0.18 to under 0.10</h3>
-        <p data-read lang="en">Reviews written from 8 pm to midnight, the busiest part of the day per hour, average <b data-draw="num" data-source="windows" data-field="avg_rating" data-where="window=night" data-fmt="dec2">—</b> against <b data-draw="num" data-source="windows" data-field="avg_rating" data-where="window=afternoon" data-fmt="dec2">—</b> from noon to 8 pm. The hour is when the review was written, not when the order arrived, so first pull late-delivery share by order hour, then check rider supply and delivery-time promises at dinner.</p>
+        <p data-read lang="en">Reviews written from 8 pm to midnight, the stretch with the most reviews per hour, average <b data-draw="num" data-source="windows" data-field="avg_rating" data-where="window=night" data-fmt="dec2">—</b> against <b data-draw="num" data-source="windows" data-field="avg_rating" data-where="window=afternoon" data-fmt="dec2">—</b> from noon to 8 pm. The hour is when the review was written, not when the order arrived, so first pull late-delivery share by order hour, then check rider supply and delivery-time promises at dinner.</p>
         <span class="pp-muted">Measure: rating gap between reviews written 8 pm to midnight and noon to 8 pm, and late-delivery share by order hour</span>
       </div>
       <div class="pp-card">
         <span class="pp-chip">Customer Experience</span>
         <h3>Reply to every 1-star. Target: from 49% to 80% replied</h3>
-        <p data-read lang="en">Since regular replies started on 07-10-2026, <b data-draw="num" data-source="kpis" data-field="one_star_reply_rate_since_replies_steady" data-row="0" data-fmt="pct">—</b> of 1-star reviews got a reply and <b data-draw="num" data-source="kpis" data-field="one_star_unreplied_since_replies_steady" data-row="0" data-fmt="int">—</b> did not, about <b data-draw="num" data-source="kpis" data-field="one_star_unreplied_per_day_since_replies_steady" data-row="0" data-fmt="int">—</b> a day. Decide whether to add staff or automate a reply that names the issue.</p>
-        <span class="pp-muted">Measure: share of the month&#x27;s 1-star reviews with a reply</span>
+        <p data-read lang="en">From 07-10-2026 to 31-10-2026, when regular replies were in place, <b data-draw="num" data-source="kpis" data-field="one_star_reply_rate_since_replies_steady" data-row="0" data-fmt="pct">—</b> of 1-star reviews got a reply and <b data-draw="num" data-source="kpis" data-field="one_star_unreplied_since_replies_steady" data-row="0" data-fmt="int">—</b> did not, about <b data-draw="num" data-source="kpis" data-field="one_star_unreplied_per_day_since_replies_steady" data-row="0" data-fmt="int">—</b> a day. Decide whether to add staff or automate a reply that names the issue. Across the whole month the rate is <b data-draw="num" data-source="kpis" data-field="one_star_reply_rate" data-row="0" data-fmt="pct">—</b>.</p>
+        <span class="pp-muted">Measure: share of 1-star reviews with a reply, counted from the day regular replies started (07-10-2026 in October)</span>
       </div>
     </div>
   </section>
@@ -335,8 +355,7 @@ dash.draw('stars', (el) => {
   const left = 34, right = 120;
   const x = d3.scaleLinear().domain([0, d3.max(data, (d) => +d.reviews)]).range([0, Math.max(40, W - left - right)]);
   el.replaceChildren();
-  const svg = d3.select(el).append('svg').attr('viewBox', `0 0 ${W} ${H}`).attr('height', H).attr('role', 'img')
-    .attr('aria-label', 'Reviews by star rating');
+  const svg = d3.select(el).append('svg').attr('viewBox', `0 0 ${W} ${H}`).attr('height', H).attr('aria-hidden', 'true');
   const tip = pp.tip(el);
   const g = svg.selectAll('g.r').data(data).join('g').attr('transform', (d, i) => `translate(0,${top + i * rowH})`);
   g.append('text').attr('class', 'pp-axis-label').attr('x', 0).attr('y', 17).text((d) => d.stars + '★');
@@ -355,8 +374,7 @@ dash.draw('praise', (el) => {
   const data = src.data;
   const W = el.clientWidth || 320, rowH = 30, H = data.length * rowH;
   el.replaceChildren();
-  const svg = d3.select(el).append('svg').attr('viewBox', `0 0 ${W} ${H}`).attr('height', H).attr('role', 'img')
-    .attr('aria-label', 'Themes in written positive reviews');
+  const svg = d3.select(el).append('svg').attr('viewBox', `0 0 ${W} ${H}`).attr('height', H).attr('aria-hidden', 'true');
   const labels = svg.append('g');
   labels.selectAll('text').data(data).join('text').attr('class', 'pp-axis-label').attr('y', (d, i) => i * rowH + 18).text((d) => d.theme);
   let left = 0; labels.selectAll('text').each(function () { left = Math.max(left, this.getComputedTextLength()); });
@@ -374,7 +392,7 @@ dash.draw('praise', (el) => {
 pp.lineChart = (el, data, opts) => {
   const W = el.clientWidth || 320, H = 220, m = { t: 12, r: 12, b: 26, l: 0 };
   el.replaceChildren();
-  const svg = d3.select(el).append('svg').attr('viewBox', `0 0 ${W} ${H}`).attr('height', H).attr('role', 'img').attr('aria-label', opts.label);
+  const svg = d3.select(el).append('svg').attr('viewBox', `0 0 ${W} ${H}`).attr('height', H).attr('aria-hidden', 'true');
   const y = d3.scaleLinear().domain(opts.yDomain).nice().range([H - m.b, m.t]);
   const yAxis = svg.append('g').call(d3.axisLeft(y).ticks(5).tickFormat(opts.yFmt).tickSize(0));
   let w = 0; yAxis.selectAll('text').each(function () { w = Math.max(w, this.getComputedTextLength()); });
@@ -383,7 +401,7 @@ pp.lineChart = (el, data, opts) => {
   const x = d3.scalePoint().domain(data.map(opts.xKey)).range([m.l + 6, W - m.r]);
   svg.append('g').selectAll('line').data(y.ticks(5)).join('line').attr('x1', m.l).attr('x2', W - m.r)
     .attr('y1', (d) => y(d)).attr('y2', (d) => y(d)).style('stroke', 'var(--cds-chart-grid)');
-  const every = Math.ceil(data.length / Math.max(2, Math.floor((W - m.l) / 52)));
+  const every = data.length > 24 ? 7 : Math.ceil(data.length / Math.max(2, Math.floor((W - m.l) / 52)));
   svg.append('g').attr('transform', `translate(0,${H - m.b})`)
     .call(d3.axisBottom(x).tickValues(data.map(opts.xKey).filter((d, i) => i % every === 0)).tickFormat(opts.xFmt).tickSize(0).tickPadding(8))
     .select('.domain').style('stroke', 'var(--cds-chart-axis)');
@@ -394,7 +412,7 @@ pp.lineChart = (el, data, opts) => {
   if (opts.ref != null) {
     svg.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(opts.ref)).attr('y2', y(opts.ref))
       .style('stroke', 'var(--cds-chart-reference)').style('stroke-dasharray', '4 3');
-    svg.append('text').attr('class', 'pp-axis-label').attr('x', W - m.r).attr('y', y(opts.ref) - 5).attr('text-anchor', 'end').text(opts.refLabel);
+    svg.append('text').attr('class', 'pp-axis-label pp-halo pp-ref').attr('x', W - m.r).attr('y', y(opts.ref) + 14).attr('text-anchor', 'end').text(opts.refLabel);
   }
   svg.append('path').datum(data).attr('fill', 'none').style('stroke', opts.color || 'var(--color-fg)').attr('stroke-width', 2)
     .attr('d', d3.line().x((d) => x(opts.xKey(d))).y((d) => y(opts.yKey(d))));
@@ -406,10 +424,11 @@ pp.lineChart = (el, data, opts) => {
     .on('mousemove', (ev, d) => tip.show(ev, opts.tip(d))).on('mouseleave', () => tip.hide());
   if (opts.hi) {
     svg.selectAll('text.hl').data(data.filter(opts.hi)).join('text').attr('class', 'pp-axis-label hl')
-      .attr('x', (d) => x(opts.xKey(d))).attr('y', (d) => y(opts.yKey(d)) - 9).attr('text-anchor', 'middle')
+      .attr('x', (d) => Math.min(W - m.r - 14, Math.max(m.l + 16, x(opts.xKey(d))))).attr('y', (d, i) => y(opts.yKey(d)) - (i % 2 ? 24 : 10)).attr('text-anchor', 'middle').classed('pp-halo', true)
       .text((d) => opts.xKey(d).slice(0, 5));
   }
   svg.selectAll('circle').raise();
+  svg.selectAll('text.pp-ref, text.hl').raise();
 };
 
 dash.draw('hours', (el) => {
@@ -489,7 +508,7 @@ dash.draw('loudest', (ol) => {
     const cap = document.createElement('div'); cap.className = 'pp-muted'; cap.textContent = 'agree';
     left.append(n, cap);
     const right = document.createElement('div');
-    const q = document.createElement('p'); q.className = 'pp-q'; q.textContent = '"' + d.text + (d.text.length >= 320 ? '…' : '') + '"';
+    const q = document.createElement('p'); q.className = 'pp-q'; q.textContent = '"' + d.text + '"';
     const meta = document.createElement('div'); meta.className = 'pp-muted';
     const st = document.createElement('span'); st.className = 'pp-stars-low'; st.style.background = pp.starColor(+d.stars); st.textContent = d.stars + ' ★';
     meta.append(st, document.createTextNode('  ' + d.date));
@@ -500,8 +519,9 @@ dash.draw('loudest', (ol) => {
 });
 </script>
 
-<p class="pp-foot">Standalone copy of the Play Store Pulse dashboard for October 2026, built from <code>data/report/10-2026/</code>.
-Reviews are English reviews from India on the public Google Play page; quotes are masked.</p>
+<p class="pp-foot">About this data: English reviews from India on the public Google Play page for October 2026, read with an
+open-source scraper, not Zomato's Play Console. Quotes are masked for personal details. Complaint themes are keyword
+matches, a first cut rather than a final count. <a href="../">All reports</a></p>
 </main>
 </body>
 </html>
