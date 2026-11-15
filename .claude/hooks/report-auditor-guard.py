@@ -21,7 +21,8 @@ READ_ONLY = {"cat", "head", "tail", "ls", "wc", "grep", "cut", "tr", "echo", "pr
 SEPARATORS = {"&&", "||", ";", "|"}
 SAFE_REDIRECTS = {("2>", "/dev/null"), (">", "/dev/null"), ("2>", "&1")}
 SAFE_MODULES = {"csv", "json", "re", "statistics", "collections", "datetime", "math", "itertools",
-                "functools", "operator", "decimal", "fractions", "string", "textwrap", "random"}
+                "decimal", "fractions", "textwrap", "random"}
+CALL_ONLY = {"open", "type", "object"}  # allowed only as the direct target of a call, never passed around
 BANNED_NAMES = {"exec", "eval", "compile", "__import__", "getattr", "setattr", "delattr", "globals",
                 "locals", "vars", "breakpoint", "input", "memoryview", "help", "exit", "quit"}
 HEREDOC = re.compile(r"<<-?\s*'(\w+)'[^\n]*\n(.*?)\n\1[ \t]*(?=\n|$)", re.S)
@@ -37,7 +38,18 @@ def check_python(code: str) -> None:
         tree = ast.parse(code)
     except SyntaxError as e:
         block(f"Python could not be parsed ({e.msg}).")
+    called = {id(n.func) for n in ast.walk(tree) if isinstance(n, ast.Call)}
     for node in ast.walk(tree):
+        if isinstance(node, ast.Name) and node.id in CALL_ONLY and id(node) not in called:
+            block(f"{node.id} may only be called directly.")
+        if isinstance(node, ast.Constant) and isinstance(node.value, (str, bytes)) and \
+                ("__" in (node.value if isinstance(node.value, str) else node.value.decode("latin-1"))):
+            block("strings containing '__' are not allowed.")
+        if isinstance(node, ast.Attribute) and node.attr in ("format", "format_map"):
+            block("str.format is not allowed; use an f-string.")
+        if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == "print" and \
+                any(k.arg == "file" for k in node.keywords):
+            block("print(file=...) is not allowed.")
         if isinstance(node, (ast.Import, ast.ImportFrom)):
             names = [a.name for a in node.names] if isinstance(node, ast.Import) else [node.module or ""]
             bad = [n for n in names if n.split(".")[0] not in SAFE_MODULES]
