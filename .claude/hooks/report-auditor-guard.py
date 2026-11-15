@@ -36,7 +36,10 @@ def _module_attrs() -> set:
 MODULE_ATTRS = _module_attrs()
 BANNED_NAMES = {"exec", "eval", "compile", "__import__", "getattr", "setattr", "delattr", "globals",
                 "locals", "vars", "breakpoint", "input", "memoryview", "help", "exit", "quit"}
-HEREDOC = re.compile(r"<<-?\s*'(\w+)'([^\n]*)\n(.*?)\n\1[ \t]*(?=\n|$)", re.S)
+# Only <<'WORD' (no <<-): the quoted word must end at a space, an operator or the line end, and the
+# closing line must be exactly WORD, so the guard reads the heredoc the same way bash does.
+HEREDOC = re.compile(r"<<[ \t]*'(\w+)'(?=[ \t;&|<>\n]|$)([^\n]*)\n(.*?)\n\1(?=\n|$)", re.S)
+INTROSPECTION = re.compile(r"^(f|tb|co|gi|cr|ag)_|^(mro|func|im_\w+)$")
 
 
 def block(msg: str) -> None:
@@ -80,7 +83,8 @@ def check_python(code: str) -> None:
                 block(f"import of {bad or 'a relative module'} is not allowed. Allowed: {', '.join(sorted(SAFE_MODULES))}.")
         elif isinstance(node, ast.Name) and (node.id in BANNED_NAMES or node.id.startswith("_")):
             block(f"{node.id} is not allowed.")
-        elif isinstance(node, ast.Attribute) and (node.attr.startswith("_") or node.attr in BANNED_NAMES):
+        elif isinstance(node, ast.Attribute) and (node.attr.startswith("_") or node.attr in BANNED_NAMES
+                                                  or INTROSPECTION.search(node.attr)):
             block(f"attribute {node.attr} is not allowed.")
         elif isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == "open":
             mode = node.args[1] if len(node.args) > 1 else next((k.value for k in node.keywords if k.arg == "mode"), None)
@@ -96,7 +100,7 @@ def check_bash(cmd: str) -> None:
     heredocs = [m.group(3) for m in HEREDOC.finditer(cmd)]
     # Keep the rest of each heredoc's opening line: it is shell and must be checked.
     shell = HEREDOC.sub(lambda m: "<<HEREDOC" + m.group(2), cmd)
-    if cmd.count("<<") != len(heredocs):
+    if "<<-" in cmd or cmd.count("<<") != len(heredocs):
         block("heredocs must use a quoted delimiter, e.g. <<'PY'.")
     if re.search(r"\$\(|`|<\(|>\(|\$\{|\\\n", shell):
         block("no command substitution, process substitution or line continuations.")
@@ -115,9 +119,9 @@ def check_bash(cmd: str) -> None:
         t = tokens[i]
         if t in SEPARATORS:
             commands.append(cur); cur = []
-        elif re.fullmatch(r"[;&|]+", t):
-            block(f"shell operator {t!r} is not allowed. Use only &&, ||, ; or |.")
-        elif re.fullmatch(r"[<>&]+", t) or (t.isdigit() and i + 1 < len(tokens) and re.fullmatch(r"[<>&]+", tokens[i + 1])):
+        elif re.fullmatch(r"[;&|<>]+", t) and t not in (">", ">&", "&>"):
+            block(f"shell operator {t!r} is not allowed. Use only &&, ||, ;, | and >/dev/null, 2>/dev/null, 2>&1.")
+        elif t in (">", ">&", "&>") or (t.isdigit() and i + 1 < len(tokens) and tokens[i + 1] in (">", ">&")):
             op = t
             if t.isdigit():
                 i += 1; op = t + tokens[i]
