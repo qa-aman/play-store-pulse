@@ -1,0 +1,11 @@
+{
+ "headline": "Customer support leads the complaints, with late delivery and prices next.",
+ "comparison_note": "Against October 2026 (from the October report): average rating 3.95 vs 3.98, 1-star share 20.2% vs 18.7%. 1-star reply coverage rose from 39.1% to 52.0%. This covers only 2 days, so read it as an early signal, not a trend.",
+ "release_note": "No version stands out: the main version, 19.9.9, sits close to the period's 1-star share, and no 20.0.x reviews appear in these 2 days. Reviews with no app version are the usual outlier.",
+ "asks_heading": "Three asks for the next period",
+ "actions": [
+  {"owner": "Customer Experience", "title": "Fix how tickets get closed", "text": "Support comes up in [[complaints.share@code=support|pct]] of written complaints, the top theme. Users say issues are pushed to email and left open. [[kpis.one_star_unreplied#0|int]] 1-star reviews got no reply. Audit a sample of closed tickets for real resolution.", "measure": "support share of complaints"},
+  {"owner": "Delivery Operations", "title": "Make delivery times honest", "text": "Late delivery comes up in [[complaints.share@code=late|pct]] of written complaints, second after support. Compare promised and actual delivery times on the orders behind these reviews.", "measure": "late share of complaints"},
+  {"owner": "Pricing and Monetisation", "title": "Make fees easier to see", "text": "Prices and fees come up in [[complaints.share@code=price|pct]] of written complaints, and the second most agreed-with review, with [[loudest.thumbs_up#1|int]] thumbs-up, is about inflated prices and extra charges. Review how fees are shown before checkout.", "measure": "price share of complaints"}
+ ]
+}

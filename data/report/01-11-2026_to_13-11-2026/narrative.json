@@ -4,8 +4,23 @@
  "release_note": "Version 20.0.0 stands out, with a 1-star share well above the period's, though on only 129 reviews. The two main versions, 19.9.9 and 20.0.1, sit close to the average. Reviews with no app version are the usual outlier.",
  "asks_heading": "Three asks for the rest of November",
  "actions": [
-  {"owner": "Customer Experience", "title": "Fix how tickets get closed", "text": "Support comes up in [[complaints.share@code=support|pct]] of written complaints, the top theme for a second period. Audit a sample of closed tickets for real resolution.", "measure": "support share of complaints in November"},
-  {"owner": "App team", "title": "Check what went wrong in 20.0.0", "text": "Version 20.0.0 has a 1-star share of [[versions.one_star_share@version=20.0.0|pct]] against [[kpis.one_star_share#0|pct]] for the period. Read its 1-star reviews before the next rollout.", "measure": "1-star share of the next release"},
-  {"owner": "Customer Experience", "title": "Keep closing the reply gap", "text": "[[kpis.one_star_unreplied#0|int]] one-star reviews still have no reply, and [[kpis.top_template_share#0|pct]] of replies open with the same line. Reply to every 1-star review and name the issue.", "measure": "1-star reply rate and share of templated replies"}
+  {
+   "owner": "Customer Experience",
+   "title": "Fix how tickets get closed",
+   "text": "Support comes up in [[complaints.share@code=support|pct]] of written complaints, the top theme for a second period. Audit a sample of closed tickets for real resolution.",
+   "measure": "support share of complaints in November"
+  },
+  {
+   "owner": "App team",
+   "title": "Check what went wrong in 20.0.0",
+   "text": "Version 20.0.0 has a 1-star share of [[versions.one_star_share@version=20.0.0|pct]] against [[kpis.one_star_share#0|pct]] for the period. Read its 1-star reviews before the next rollout.",
+   "measure": "1-star share of the next release"
+  },
+  {
+   "owner": "Customer Experience",
+   "title": "Keep closing the reply gap",
+   "text": "[[kpis.one_star_unreplied#0|int]] one-star reviews still have no reply, and [[kpis.one_star_top_template_share#0|pct]] of replies to 1-star reviews open with the same line. Reply to every 1-star review and name the issue.",
+   "measure": "1-star reply rate and share of templated 1-star replies"
+  }
  ]
 }

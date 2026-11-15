@@ -5,15 +5,15 @@ Why it matters: These are service problems, so the fixes sit with Customer Exper
 The numbers
 - 19,593 reviews, 18.7% of them 1-star
 - Support in 26.9% of written complaints, late delivery in 16.5%
-- 8 pm to midnight, the busiest stretch, averages 3.89 against 4.07 from noon to 8 pm
-- 2,225 one-star reviews got no reply, and 62.8% of replies open with the same line
+- 8 pm to midnight, the busiest part of the day per hour, averages 3.89 against 4.07 from noon to 8 pm
+- 2,225 one-star reviews got no reply, and 54.6% of 1-star replies open with the same line
 
 Three asks (reply by 20-11-2026)
 1. Customer Experience: Fix how tickets get closed
 2. Delivery Operations: Look at the late-night experience
 3. Customer Experience: Reply to every 1-star review properly
 
-In their words: "zomato is getting worse day by day, i ordered the food, clearly mentioned half kg but i got 350-380g of food, try to connect with support no success try to..."
+In their words: "The app doesn't give you the option to chat with a support agent directly and makes you go through the chatbot. The chatbot also doesn't connect you to an..."
 
 Go deeper: https://claude.ai/artifact/RpvNsCSkum5vSw8xjtLSjD
 

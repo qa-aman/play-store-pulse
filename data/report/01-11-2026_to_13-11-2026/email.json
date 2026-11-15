@@ -1,11 +1,11 @@
 {
-  "subject": "Play Store Pulse 01-11 to 13-11: support tops complaints, check 20.0.0",
-  "bottom_line": "Ratings held at [[kpis.avg_rating#0|dec2]], customer support is still the top complaint, and release 20.0.0 runs at [[versions.one_star_share@version=20.0.0|pct]] 1-star.",
-  "why_it_matters": "Most of what users write about is service, so the main fix sits with Customer Experience; release 20.0.0 needs a check from the App team before the next rollout.",
-  "numbers": [
-    "[[kpis.reviews#0|int]] reviews, average [[kpis.avg_rating#0|dec2]] (October: [[10-2026:kpis.avg_rating#0|dec2]])",
-    "Support in [[complaints.share@code=support|pct]] of written complaints, late delivery in [[complaints.share@code=late|pct]]",
-    "1-star reviews with a reply: [[kpis.one_star_reply_rate#0|pct]] (October: [[10-2026:kpis.one_star_reply_rate#0|pct]])"
-  ],
-  "quote": "complaints:support"
+ "subject": "Play Store Pulse 01-11 to 13-11: support tops complaints, check 20.0.0",
+ "bottom_line": "Ratings held at [[kpis.avg_rating#0|dec2]], customer support is still the top complaint, and release 20.0.0 runs at [[versions.one_star_share@version=20.0.0|pct]] 1-star.",
+ "why_it_matters": "Most of what users write about is service, so the main fix sits with Customer Experience; release 20.0.0 needs a check from the App team before the next rollout.",
+ "numbers": [
+  "[[kpis.reviews#0|int]] reviews, average [[kpis.avg_rating#0|dec2]] (October: [[10-2026:kpis.avg_rating#0|dec2]])",
+  "Support in [[complaints.share@code=support|pct]] of written complaints, late delivery in [[complaints.share@code=late|pct]]",
+  "1-star reviews with a reply: [[kpis.one_star_reply_rate#0|pct]] (October: [[10-2026:kpis.one_star_reply_rate#0|pct]])"
+ ],
+ "quote": "loudest:2"
 }

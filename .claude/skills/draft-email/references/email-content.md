@@ -52,4 +52,8 @@ Formats: `int`, `pct`, `dec2`, `min`, `text`. Files: `kpis, stars, complaints, p
 - Compare every headline number with something: the previous period, the period average, a target.
 - One idea per bullet. No adjectives in place of numbers ("sharp drop" becomes "down from 22.1% to 18.6%").
 - No em dashes, no emojis, dates DD-MM-YYYY, no exclamation marks.
+- Match each number to the group it was measured on. `top_template_share` covers all replies, most of them thank-yous to 4 and 5-star reviews; next to a 1-star point use `one_star_top_template_share`.
+- Compare parts of the day per hour, not in total: night and morning are 4 hours, early and afternoon are 8. Say "busiest" or "most" only if it holds per hour, and say "per hour".
+- Check every superlative (most, busiest, worst, top, again) against this period's data before writing it. A claim like "again" or "second period" needs the earlier period's file.
+- `median_reply_minutes` is empty when no reply time is valid (an edited review can carry a date after its reply). Then say reply times are not available, never that replies are fast.
 - Never name a reviewer or paste an unmasked review.

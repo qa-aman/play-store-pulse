@@ -37,6 +37,10 @@ The first dashboard, built by hand before the skill existed:
 
 The Dashboard artifact "Zomato Play Store Pulse October 2026" is at https://claude.ai/artifact/RpvNsCSkum5vSw8xjtLSjD. The 8 JSON files are uploaded as assets and attached as `fixed` file datasets. The page is `files/index.html` in the artifact's store and follows the one-writer rule. Two calcs live in the page: `windows` (rating by part of the day) and `worst_days`. Later periods get their own artifact through the skill, not by refreshing this one.
 
+## Report audit
+
+The `report-auditor` subagent (`.claude/agents/report-auditor.md`, Sonnet) checks one period: it recomputes every number on the dashboard and in the email from `data/raw/reviews_<label>.csv` and lists each mismatch with where it appears and the correct value. Run it after `/play-store-pulse` or `/draft-email`, before the email goes to leadership. It is read-only: the hook `.claude/hooks/report-auditor-guard.py` lets it write only to its memory folder (`.claude/agent-memory/report-auditor/`, committed), and allows Bash only an allowlist of read-only commands plus inline project Python whose imports and `open()` calls are checked.
+
 ## Constraints to design around
 
 - **Most reviews are star-only:** in October 2026, only about 4,900 of 19,600 reviews had more than 20 characters of text. Ratings use every review. Themes can only use reviews with text.

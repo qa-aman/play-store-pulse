@@ -66,18 +66,40 @@ def share(n: int, d: int) -> float:
 
 
 NEGATIVE = re.compile(r"worst|bad|never|pathetic|terrible|poor|fraud|disappoint|not good")
+# A praise quote must not complain or ask for something ("good app but no discount", "please add offers").
+NOT_PRAISE = re.compile(NEGATIVE.pattern + r"|\bbut\b|\bnot\b|n['’]t\b|\bnt\b|\bno\b|yet to|\bfew\b|add more|please|\bplz\b|should|lekin|nahi|"
+                        r"issue|problem|expensive|costly|higher price|unavailable|bring back")
+# A complaint quote must not read as praise ("food quality was too good, I love it" under a 1-star rating).
+PRAISE_WORDS = re.compile(r"\bgood\b|great|love|excellent|awesome|amazing|\bnice\b|\bbest\b|tasty|delicious|"
+                          r"happy|hygienic|superb|fantastic")
 
 
-def pick_quotes(pool: list[dict], themes: list[str], used: set, k: int = 2, positive: bool = False) -> list[str]:
-    """Prefer reviews that fit only this theme, then the most thumbs-up; never reuse a review."""
-    def fits(r):
-        return sum(1 for pat in themes if re.search(pat, r["low"]))
-    fit = [r for r in pool if 60 <= len(r["text"]) <= 260 and r["reviewId"] not in used
-           and not (positive and NEGATIVE.search(r["low"]))]
-    fit.sort(key=lambda r: (fits(r), -r["thumbs"], -len(r["text"])))
+def pick_quotes(pool: list[dict], own: str, themes: list[str], used: set, k: int = 2,
+                positive: bool = False) -> list[str]:
+    """Pick quotes that are about this theme and match its tone; never reuse a review.
+
+    Order: fewest other themes matched, then most mentions of this theme, then most thumbs-up.
+    """
+    def other_themes(r):
+        return sum(1 for pat in themes if pat != own and re.search(pat, r["low"]))
+
+    def on_tone(r):
+        if positive:
+            return not NOT_PRAISE.search(r["low"])
+        return not (PRAISE_WORDS.search(r["low"]) and not NEGATIVE.search(r["low"]))
+
+    fit = [r for r in pool if 60 <= len(r["text"]) <= 260 and r["reviewId"] not in used and on_tone(r)]
+    fit.sort(key=lambda r: (other_themes(r), -len(re.findall(own, r["low"])), -r["thumbs"], -len(r["text"])))
     chosen = fit[:k]
     used.update(r["reviewId"] for r in chosen)
     return [mask(r["text"]) for r in chosen]
+
+
+def cut(text: str, limit: int = 320) -> str:
+    """Shorten at a word boundary, marking the cut."""
+    if len(text) <= limit:
+        return text
+    return text[:limit].rsplit(" ", 1)[0].rstrip(",.;:!- ") + "..."
 
 
 def build(rows: list[dict]) -> dict[str, list[dict]]:
@@ -89,10 +111,13 @@ def build(rows: list[dict]) -> dict[str, list[dict]]:
     one = [r for r in rows if r["stars"] == 1]
     replied = [r for r in rows if r["replyContent"]]
     openings = Counter(r["replyContent"][:50] for r in replied)
-    lag = [
+    one_replied = [r for r in one if r["replyContent"]]
+    one_openings = Counter(r["replyContent"][:50] for r in one_replied)
+    # A review edited after its reply carries the edit time, so its reply can predate it; those have no reply time.
+    lag = [m for m in (
         (datetime.strptime(r["repliedAt"], "%d-%m-%Y %H:%M") - r["dt"]).total_seconds() / 60
         for r in replied if r["repliedAt"]
-    ]
+    ) if m >= 0]
 
     kpis = [{
         "first_day": min(r["dt"] for r in rows).strftime("%d-%m-%Y"),
@@ -113,6 +138,8 @@ def build(rows: list[dict]) -> dict[str, list[dict]]:
         "one_star_unreplied": sum(1 for r in one if not r["replyContent"]),
         "top_template_share": share(openings.most_common(1)[0][1], len(replied)) if replied else 0.0,
         "top3_template_share": share(sum(c for _, c in openings.most_common(3)), len(replied)) if replied else 0.0,
+        "one_star_top_template_share": (share(one_openings.most_common(1)[0][1], len(one_replied))
+                                        if one_replied else 0.0),
         "median_reply_minutes": round(st.median(lag)) if lag else None,
     }]
 
@@ -130,7 +157,7 @@ def build(rows: list[dict]) -> dict[str, list[dict]]:
     complaints = []
     for code, name, owner, pat in COMPLAINTS:
         hit = [r for r in neg if re.search(pat, r["low"])]
-        q = pick_quotes(hit, complaint_pats, used)
+        q = pick_quotes(hit, pat, complaint_pats, used)
         complaints.append({"code": code, "theme": name, "reviews": len(hit), "share": share(len(hit), len(neg)),
                            "owner": owner, "quote_1": q[0] if q else "", "quote_2": q[1] if len(q) > 1 else ""})
     complaints.sort(key=lambda c: -c["reviews"])
@@ -138,7 +165,7 @@ def build(rows: list[dict]) -> dict[str, list[dict]]:
     praise = []
     for code, name, pat in PRAISE:
         hit = [r for r in pos if re.search(pat, r["low"])]
-        q = pick_quotes(hit, praise_pats, used, 1, positive=True)
+        q = pick_quotes(hit, pat, praise_pats, used, 1, positive=True)
         praise.append({"code": code, "theme": name, "reviews": len(hit), "share": share(len(hit), len(pos)),
                        "quote": q[0] if q else ""})
     praise.sort(key=lambda p: -p["reviews"])
@@ -164,7 +191,7 @@ def build(rows: list[dict]) -> dict[str, list[dict]]:
                  "one_star_share": share(sum(1 for x in s if x == 1), len(s))} for v, s in top_ver]
 
     loudest = [{"rank": i + 1, "thumbs_up": r["thumbs"], "stars": r["stars"], "date": r["dt"].strftime("%d-%m-%Y"),
-                "text": mask(r["text"])[:320]} for i, r in enumerate(loud)]
+                "text": cut(mask(r["text"]))} for i, r in enumerate(loud)]
 
     return {"kpis": kpis, "stars": stars, "complaints": complaints, "praise": praise,
             "hours": hours, "daily": daily, "versions": versions, "loudest": loudest}

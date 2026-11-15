@@ -43,4 +43,8 @@ Fixed words like "8 pm to midnight" are fine as text.
 
 - No em dashes, no emojis, dates as DD-MM-YYYY. The script fails on em dashes and ISO dates.
 - Say what the data shows, not more. Keyword themes are estimates, so no claims finer than one decimal.
+- Match each number to the group it was measured on. `top_template_share` covers all replies, most of them thank-yous to 4 and 5-star reviews; next to a 1-star point use `one_star_top_template_share`.
+- Compare parts of the day per hour, not in total: night and morning are 4 hours, early and afternoon are 8. Say "busiest" or "most" only if it holds per hour, and say "per hour".
+- Check every superlative (most, busiest, worst, top, again) against this period's data before writing it. A claim like "again" or "second period" needs the earlier period's file.
+- `median_reply_minutes` is empty when no reply time is valid (an edited review can carry a date after its reply). Then say reply times are not available, never that replies are fast.
 - Never quote a review in the narrative; quotes live in `complaints.json` and `loudest.json`, already masked.

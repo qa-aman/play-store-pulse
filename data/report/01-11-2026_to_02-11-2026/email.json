@@ -1,0 +1,12 @@
+{
+ "subject": "Play Store Pulse 01-11 to 02-11: support tops complaints, then delays",
+ "bottom_line": "Rating held at [[kpis.avg_rating#0|dec2]], but customer support is the top complaint and late delivery is second.",
+ "why_it_matters": "This is an early 2-day read, but the issues users write about are operational, so the fixes sit with CX, Delivery and Pricing.",
+ "numbers": [
+  "[[kpis.reviews#0|int]] reviews, average [[kpis.avg_rating#0|dec2]] (October: [[10-2026:kpis.avg_rating#0|dec2]])",
+  "1-star share [[kpis.one_star_share#0|pct]] (October: [[10-2026:kpis.one_star_share#0|pct]])",
+  "Support in [[complaints.share@code=support|pct]] of written complaints, late delivery in [[complaints.share@code=late|pct]], prices in [[complaints.share@code=price|pct]]",
+  "[[kpis.one_star_unreplied#0|int]] 1-star reviews got no reply"
+ ],
+ "quote": "loudest:1"
+}
