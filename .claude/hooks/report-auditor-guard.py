@@ -23,6 +23,17 @@ SAFE_REDIRECTS = {("2>", "/dev/null"), (">", "/dev/null"), ("2>", "&1")}
 SAFE_MODULES = {"csv", "json", "re", "statistics", "collections", "datetime", "math", "itertools",
                 "decimal", "fractions", "textwrap", "random"}
 CALL_ONLY = {"open", "type", "object"}  # allowed only as the direct target of a call, never passed around
+def _module_attrs() -> set:
+    """Attribute names on the allowed modules that lead to other modules (collections.sys, re.functools)."""
+    import importlib, types
+    names = {"system", "modules", "popen", "spawn", "builtins", "loader", "spec"}
+    for m in SAFE_MODULES:
+        mod = importlib.import_module(m)
+        names.update(a for a in dir(mod) if isinstance(getattr(mod, a, None), types.ModuleType))
+    return names
+
+
+MODULE_ATTRS = _module_attrs()
 BANNED_NAMES = {"exec", "eval", "compile", "__import__", "getattr", "setattr", "delattr", "globals",
                 "locals", "vars", "breakpoint", "input", "memoryview", "help", "exit", "quit"}
 HEREDOC = re.compile(r"<<-?\s*'(\w+)'([^\n]*)\n(.*?)\n\1[ \t]*(?=\n|$)", re.S)
@@ -39,7 +50,19 @@ def check_python(code: str) -> None:
     except SyntaxError as e:
         block(f"Python could not be parsed ({e.msg}).")
     called = {id(n.func) for n in ast.walk(tree) if isinstance(n, ast.Call)}
+    aliases = {(a.asname or a.name).split(".")[0] for n in ast.walk(tree) if isinstance(n, ast.Import) for a in n.names}
+    attr_bases = {id(n.value) for n in ast.walk(tree) if isinstance(n, ast.Attribute)}
     for node in ast.walk(tree):
+        if isinstance(node, ast.Name) and node.id in aliases and id(node) not in attr_bases \
+                and not isinstance(node.ctx, ast.Store):
+            block(f"module {node.id} may only be used as {node.id}.<name>, never passed around.")
+        if isinstance(node, ast.Attribute) and node.attr in MODULE_ATTRS:
+            block(f"attribute {node.attr} leads to another module and is not allowed.")
+        if isinstance(node, ast.ImportFrom) and any(a.name in MODULE_ATTRS or a.name == "*" for a in node.names):
+            block("that import pulls in another module and is not allowed.")
+        if isinstance(node, ast.Call) and (any(isinstance(a, ast.Starred) for a in node.args)
+                                           or any(k.arg is None for k in node.keywords)):
+            block("* and ** unpacking in calls is not allowed.")
         if isinstance(node, ast.Name) and node.id in CALL_ONLY and id(node) not in called:
             block(f"{node.id} may only be called directly.")
         if isinstance(node, ast.Constant) and isinstance(node.value, (str, bytes)) and \
@@ -61,6 +84,8 @@ def check_python(code: str) -> None:
             block(f"attribute {node.attr} is not allowed.")
         elif isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == "open":
             mode = node.args[1] if len(node.args) > 1 else next((k.value for k in node.keywords if k.arg == "mode"), None)
+            if len(node.args) > 2:
+                block("open() takes at most a path and a mode.")
             if mode is not None and not (isinstance(mode, ast.Constant) and mode.value in ("r", "rb", "rt")):
                 block("open() is allowed only for reading ('r').")
             if any(k.arg not in ("mode", "encoding", "newline", "errors") for k in node.keywords):
